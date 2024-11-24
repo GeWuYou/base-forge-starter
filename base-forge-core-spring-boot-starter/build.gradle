@@ -1,0 +1,20 @@
+
+dependencies {
+    implementation("com.gewuyou:base-forge-i18n-spring-boot-starter")
+}
+publishing {
+    repositories {
+        maven {
+            name = 'localRepo'
+            url = "file://D:/Maven/mvn_repository"
+        }
+    }
+    publications {
+        create("core", MavenPublication){
+            groupId = 'com.gewuyou'
+            artifactId = 'base-forge-core-spring-boot-starter'
+            version = '1.0.0'
+            from components.java
+        }
+    }
+}

@@ -1,0 +1,24 @@
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation('org.springframework.boot:spring-boot-autoconfigure')
+    implementation('org.springframework.boot:spring-boot-configuration-processor')
+    implementation("com.gewuyou:base-forge-i18n-spring-boot-starter")
+    implementation("com.gewuyou:base-forge-json-spring-boot-starter")
+}
+publishing {
+    repositories {
+        maven {
+            name = 'localRepo'
+            url = "file://D:/Maven/mvn_repository"
+        }
+    }
+    publications {
+        create("redis", MavenPublication){
+            groupId = 'com.gewuyou'
+            artifactId = 'base-forge-redis-spring-boot-starter'
+            version = '1.0.1'
+            from components.java
+        }
+    }
+}

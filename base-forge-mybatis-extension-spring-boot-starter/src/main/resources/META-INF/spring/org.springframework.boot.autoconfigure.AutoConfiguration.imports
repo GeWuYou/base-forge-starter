@@ -1,0 +1,3 @@
+com.gewuyou.extension.config.MyBatisExtensionAutoConfiguration
+com.gewuyou.extension.config.MyBatisAutoConfiguration
+com.gewuyou.extension.config.MyBatisPlusAutoConfiguration

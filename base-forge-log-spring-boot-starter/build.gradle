@@ -1,0 +1,23 @@
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
+    implementation("com.gewuyou:base-forge-i18n-spring-boot-starter")
+    implementation("com.gewuyou:base-forge-util-spring-boot-starter")
+}
+publishing {
+    repositories {
+        maven {
+            name = 'localRepo'
+            url = "file://D:/Maven/mvn_repository"
+        }
+    }
+    publications {
+        create("log", MavenPublication){
+            groupId = 'com.gewuyou'
+            artifactId = 'base-forge-log-spring-boot-starter'
+            version = '1.0.0'
+            from components.java
+        }
+    }
+}
