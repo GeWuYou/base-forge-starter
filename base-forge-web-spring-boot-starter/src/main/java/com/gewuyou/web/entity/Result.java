@@ -1,9 +1,9 @@
 package com.gewuyou.web.entity;
 
 
-import com.gewuyou.i18n.config.I18nAutoConfiguration;
-import com.gewuyou.i18n.enums.ResponseInformation;
-import com.gewuyou.util.SpringUtil;
+import com.gewuyou.i18n.entity.ResponseInformation;
+import com.gewuyou.util.I18nMessageUtil;
+import com.gewuyou.web.i18n.enums.WebResponseInformation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.context.MessageSource;
@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Schema(description = "返回结果包装类")
 @Data
 public class Result<T> implements Serializable {
-    private MessageSource i18nMessageSource;
     /**
      * 结果代码
      */
@@ -42,72 +41,69 @@ public class Result<T> implements Serializable {
      */
     @Schema(description = "结果数据")
     private transient T data;
-    private Result() {
-        this.i18nMessageSource = (MessageSource) SpringUtil.getBean(I18nAutoConfiguration.MESSAGE_SOURCE_BEAN_NAME);
-    }
 
     private Result(ResponseInformation responseInformation, boolean success, T data, MessageSource messageSource, Object... args) {
-        this.code = responseInformation.getCode();
+        this.code = responseInformation.getResponseCode();
         this.success = success;
-        this.message = messageSource.getMessage(responseInformation.getMessage(), args, LocaleContextHolder.getLocale());
+        this.message = messageSource.getMessage(responseInformation.getResponseI8nMessageCode(), args, LocaleContextHolder.getLocale());
         this.data = data;
     }
 
     private Result(ResponseInformation responseInformation, boolean success, T data, Object... args) {
-        this.code = responseInformation.getCode();
+        this.code = responseInformation.getResponseCode();
         this.success = success;
-        this.message = i18nMessageSource.getMessage(responseInformation.getMessage(), args, LocaleContextHolder.getLocale());
+        this.message = I18nMessageUtil.getI18nMessageSource().getMessage(responseInformation.getResponseI8nMessageCode(), args, LocaleContextHolder.getLocale());
         this.data = data;
     }
 
     private Result(ResponseInformation responseInformation, boolean success, T data, MessageSource messageSource) {
-        this.code = responseInformation.getCode();
+        this.code = responseInformation.getResponseCode();
         this.success = success;
-        this.message = messageSource.getMessage(responseInformation.getMessage(), null, LocaleContextHolder.getLocale());
+        this.message = messageSource.getMessage(responseInformation.getResponseI8nMessageCode(), null, LocaleContextHolder.getLocale());
         this.data = data;
     }
 
     private Result(ResponseInformation responseInformation, boolean success, T data) {
-        this.code = responseInformation.getCode();
+        this.code = responseInformation.getResponseCode();
         this.success = success;
-        this.message = i18nMessageSource.getMessage(responseInformation.getMessage(), null, LocaleContextHolder.getLocale());
+        this.message = I18nMessageUtil.getI18nMessageSource().getMessage(responseInformation.getResponseI8nMessageCode(), null, LocaleContextHolder.getLocale());
         this.data = data;
     }
 
 
-    private Result(Integer code, String message, MessageSource messageSource, Object... args) {
+    private Result(Integer code, String i18nMessageCode, MessageSource messageSource, Object... args) {
         this.code = code;
-        this.message = messageSource.getMessage(message, args, LocaleContextHolder.getLocale());
+        this.message = messageSource.getMessage(i18nMessageCode, args, LocaleContextHolder.getLocale());
         this.success = false;
     }
 
-    private Result(Integer code, String message, Object... args) {
+    private Result(Integer code, String i18nMessageCode, Object... args) {
         this.code = code;
-        this.message = i18nMessageSource.getMessage(message, args, LocaleContextHolder.getLocale());
+        this.message = I18nMessageUtil.getI18nMessageSource().getMessage(i18nMessageCode, args, LocaleContextHolder.getLocale());
         this.success = false;
     }
 
-    private Result(Integer code, String message, MessageSource messageSource) {
+    private Result(Integer code, String i18nMessageCode, MessageSource messageSource) {
         this.code = code;
-        this.message = messageSource.getMessage(message, null, LocaleContextHolder.getLocale());
+        this.message = messageSource.getMessage(i18nMessageCode, null, LocaleContextHolder.getLocale());
         this.success = false;
     }
 
-    private Result(Integer code, String message) {
+    private Result(Integer code, String i18nMessageCode) {
         this.code = code;
-        this.message = i18nMessageSource.getMessage(message, null, LocaleContextHolder.getLocale());
+        this.message = I18nMessageUtil.getI18nMessageSource().getMessage(i18nMessageCode, null, LocaleContextHolder.getLocale());
         this.success = false;
     }
 
     private Result(ResponseInformation responseInformation, MessageSource messageSource, Object... args) {
-        this.code = responseInformation.getCode();
-        this.message = messageSource.getMessage(message, args, LocaleContextHolder.getLocale());
+        this.code = responseInformation.getResponseCode();
+        this.message = messageSource.getMessage(responseInformation.getResponseI8nMessageCode(), args, LocaleContextHolder.getLocale());
         this.success = false;
     }
 
     private Result(ResponseInformation responseInformation, Object... args) {
-        this.code = responseInformation.getCode();
-        this.message = i18nMessageSource.getMessage(message, args, LocaleContextHolder.getLocale());
+        this.code = responseInformation.getResponseCode();
+        this.message = I18nMessageUtil.getI18nMessageSource().getMessage(responseInformation.getResponseI8nMessageCode(), args, LocaleContextHolder.getLocale());
         this.success = false;
     }
 
@@ -117,18 +113,38 @@ public class Result<T> implements Serializable {
      * @return 成功结果
      */
     public static <T> Result<T> success(MessageSource messageSource) {
-        return new Result<>(ResponseInformation.OPERATION_SUCCESSFUL, true, null, messageSource);
+        return new Result<>(WebResponseInformation.OPERATION_SUCCESSFUL, true, null, messageSource);
+    }
+
+    /**
+     * 无数据成功返回
+     *
+     * @return 成功结果
+     */
+    public static <T> Result<T> success() {
+        return new Result<>(WebResponseInformation.OPERATION_SUCCESSFUL, true, null);
     }
 
     /**
      * 设置响应信息成功返回
      *
      * @param responseInformation 响应代码枚举
-     * @param <T>                 泛型
+     * @param <T>          泛型
      * @return 成功结果
      */
     public static <T> Result<T> success(ResponseInformation responseInformation, MessageSource messageSource) {
         return new Result<>(responseInformation, true, null, messageSource);
+    }
+
+    /**
+     * 设置响应信息成功返回
+     *
+     * @param responseInformation 响应代码枚举
+     * @param <T>          泛型
+     * @return 成功结果
+     */
+    public static <T> Result<T> success(ResponseInformation responseInformation) {
+        return new Result<>(responseInformation, true, null);
     }
 
     /**
@@ -140,29 +156,65 @@ public class Result<T> implements Serializable {
      */
 
     public static <T> Result<T> success(T data, MessageSource messageSource) {
-        return new Result<>(ResponseInformation.OPERATION_SUCCESSFUL, true, data, messageSource);
+        return new Result<>(WebResponseInformation.OPERATION_SUCCESSFUL, true, data, messageSource);
+    }
+
+    /**
+     * 有数据成功返回
+     *
+     * @param data 数据
+     * @param <T>  泛型
+     * @return 成功结果
+     */
+    public static <T> Result<T> success(T data) {
+        return new Result<>(WebResponseInformation.OPERATION_SUCCESSFUL, true, data);
     }
 
     /**
      * 有数据设置响应信息成功返回
      *
      * @param responseInformation 响应代码枚举
-     * @param data                数据
-     * @param <T>                 泛型
+     * @param data         数据
+     * @param <T>          泛型
      * @return 成功结果
      */
-
     public static <T> Result<T> success(ResponseInformation responseInformation, T data, MessageSource messageSource) {
         return new Result<>(responseInformation, true, data, messageSource);
     }
 
     /**
+     * 有数据设置响应信息成功返回
+     *
+     * @param responseInformation 响应代码枚举
+     * @param data         数据
+     * @param <T>          泛型
+     * @return 成功结果
+     */
+    public static <T> Result<T> success(ResponseInformation responseInformation, T data) {
+        return new Result<>(responseInformation, true, data);
+    }
+
+    /**
      * 失败返回
      *
+     * @param code        响应代码
+     * @param i18nMessageCode 响应信息i18n代码
      * @return 失败结果
      */
-    public static Result<String> failure(int code, String message) {
-        return new Result<>(code, message);
+    public static Result<String> failure(int code, String i18nMessageCode) {
+        return new Result<>(code, i18nMessageCode);
+    }
+
+    /**
+     * 失败返回
+     *
+     * @param code        响应代码
+     * @param i18nMessageCode 响应信息i18n代码
+     * @param args        占位符参数
+     * @return 失败结果
+     */
+    public static Result<String> failure(int code, String i18nMessageCode, Object... args) {
+        return new Result<>(code, i18nMessageCode, args);
     }
 
     /**
@@ -170,8 +222,18 @@ public class Result<T> implements Serializable {
      *
      * @return 失败结果
      */
-    public static Result<String> failure(String message, MessageSource messageSource) {
-        return new Result<>(HttpStatus.BAD_REQUEST.value(), message, messageSource);
+    public static Result<String> failure(String i18nMessageCode, MessageSource messageSource) {
+        return new Result<>(HttpStatus.BAD_REQUEST.value(), i18nMessageCode, messageSource);
+    }
+
+
+    /**
+     * 失败返回
+     *
+     * @return 失败结果
+     */
+    public static Result<String> failure(String i18nMessageCode) {
+        return new Result<>(HttpStatus.BAD_REQUEST.value(), i18nMessageCode);
     }
 
     /**
@@ -179,8 +241,8 @@ public class Result<T> implements Serializable {
      *
      * @return 失败结果
      */
-    public static Result<String> failure(int code, String message, MessageSource messageSource) {
-        return new Result<>(code, message, messageSource);
+    public static Result<String> failure(int code, String i18nMessageCode, MessageSource messageSource) {
+        return new Result<>(code, i18nMessageCode, messageSource);
     }
 
     /**
@@ -192,6 +254,27 @@ public class Result<T> implements Serializable {
         return new Result<>(responseInformation, messageSource, args);
     }
 
+    /**
+     * 失败返回
+     *
+     * @param responseInformation 响应代码枚举
+     * @param args         占位符参数
+     * @return 失败结果
+     */
+    public static Result<String> failure(ResponseInformation responseInformation, Object... args) {
+        return new Result<>(responseInformation, args);
+    }
+
+    /**
+     * 设置响应信息失败返回
+     *
+     * @param responseInformation  响应代码枚举
+     * @param messageSource 消息源
+     * @return 失败结果
+     */
+    public static Result<String> failure(ResponseInformation responseInformation, MessageSource messageSource) {
+        return new Result<>(responseInformation, false, null, messageSource);
+    }
 
     /**
      * 设置响应信息失败返回
@@ -199,8 +282,8 @@ public class Result<T> implements Serializable {
      * @param responseInformation 响应代码枚举
      * @return 失败结果
      */
-    public static Result<String> failure(ResponseInformation responseInformation, MessageSource messageSource) {
-        return new Result<>(responseInformation, false, null, messageSource);
+    public static Result<String> failure(ResponseInformation responseInformation) {
+        return new Result<>(responseInformation, false, null);
     }
 }
 

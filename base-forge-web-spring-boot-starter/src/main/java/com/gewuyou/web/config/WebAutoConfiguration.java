@@ -9,7 +9,6 @@ import com.gewuyou.web.interceptor.AccessLimitInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -51,12 +50,13 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
      * 创建 AccessLimitInterceptor
      * @param cacheService 缓存服务
      * @param objectMapper 对象映射器
-     * @param messageSource 消息源
      * @return AccessLimitInterceptor
      */
     @Bean
-    public AccessLimitInterceptor createAccessLimitInterceptor(ICacheService cacheService, ObjectMapper objectMapper, MessageSource messageSource) {
-        return new AccessLimitInterceptor(cacheService,objectMapper,messageSource);
+    public AccessLimitInterceptor createAccessLimitInterceptor(
+            ICacheService cacheService,
+            ObjectMapper objectMapper) {
+        return new AccessLimitInterceptor(cacheService,objectMapper);
     }
 
     /**

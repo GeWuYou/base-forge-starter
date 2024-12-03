@@ -1,4 +1,3 @@
-
 dependencies {
     implementation("com.gewuyou:base-forge-i18n-spring-boot-starter")
     implementation("com.gewuyou:base-forge-util-spring-boot-starter")
@@ -17,11 +16,20 @@ publishing {
         }
     }
     publications {
-        create("web", MavenPublication){
+        create("web", MavenPublication) {
             groupId = 'com.gewuyou'
             artifactId = 'base-forge-web-spring-boot-starter'
             version = '1.0.0'
             from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
         }
+
     }
 }

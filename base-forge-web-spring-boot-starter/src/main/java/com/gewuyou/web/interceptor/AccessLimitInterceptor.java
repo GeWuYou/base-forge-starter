@@ -1,15 +1,15 @@
 package com.gewuyou.web.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gewuyou.i18n.enums.ResponseInformation;
 import com.gewuyou.redis.service.ICacheService;
 import com.gewuyou.web.annotation.AccessLimit;
 import com.gewuyou.web.entity.Result;
+import com.gewuyou.web.i18n.enums.WebResponseInformation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -33,16 +33,13 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
 
     private final ObjectMapper objectMapper;
 
-    private final MessageSource messageSource;
     @Autowired
     public AccessLimitInterceptor(
             ICacheService cacheService,
-            ObjectMapper objectMapper,
-            MessageSource messageSource
+            ObjectMapper objectMapper
     ) {
         this.cacheService = cacheService;
         this.objectMapper = objectMapper;
-        this.messageSource = messageSource;
     }
 
     /**
@@ -84,7 +81,7 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
         String key = "limit:" + System.currentTimeMillis() / 1000 + ":" + seconds;
         long l = cacheService.incrExpire(key,seconds);
         if (l > maxCount) {
-            render(response, Result.failure(ResponseInformation.TOO_MANY_REQUESTS,messageSource,seconds));
+            render(response, Result.failure(WebResponseInformation.TOO_MANY_REQUESTS));
             log.warn("{}请求次数超过每{}秒{}次限制", key, seconds, maxCount);
             return false;
         }
@@ -92,7 +89,7 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
     }
 
     private void render(HttpServletResponse response, Result<?> result) throws Exception {
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         OutputStream out = response.getOutputStream();
         String str = objectMapper.writeValueAsString(result);
         out.write(str.getBytes(StandardCharsets.UTF_8));

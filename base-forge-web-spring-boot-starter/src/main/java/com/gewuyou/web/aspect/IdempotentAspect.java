@@ -1,11 +1,11 @@
 package com.gewuyou.web.aspect;
 
 
-import com.gewuyou.i18n.enums.ResponseInformation;
 import com.gewuyou.redis.service.ICacheService;
 import com.gewuyou.util.IpUtil;
 import com.gewuyou.web.annotation.Idempotent;
 import com.gewuyou.web.exception.AccessException;
+import com.gewuyou.web.i18n.enums.WebResponseInformation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -54,7 +54,7 @@ public class IdempotentAspect {
 
         if (Boolean.FALSE.equals(isFirstRequest)) {
             // 如果键已存在，表示重复请求
-            throw new AccessException(ResponseInformation.REPEAT_REQUEST);
+            throw new AccessException(WebResponseInformation.REPEAT_REQUEST);
         }
 
         try {

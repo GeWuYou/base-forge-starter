@@ -3,11 +3,11 @@ package com.gewuyou.web.handler;
 
 import com.gewuyou.core.exception.GlobalException;
 import com.gewuyou.core.exception.InternalException;
-import com.gewuyou.i18n.enums.ResponseInformation;
-import com.gewuyou.util.SpringUtil;
+import com.gewuyou.util.I18nMessageUtil;
 import com.gewuyou.web.entity.Result;
+import com.gewuyou.web.i18n.enums.WebResponseInformation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -30,6 +30,32 @@ import java.util.Objects;
 public class GlobalExceptionHandler {
 
     /**
+     * 获取Validated参数异常的详细信息
+     *
+     * @param e 异常
+     * @return StringBuilder
+     */
+    private static StringBuilder getValidatedMessage(BindException e) {
+        StringBuilder msg = new StringBuilder();
+        List<FieldError> fieldErrors = e.getFieldErrors();
+        fieldErrors.forEach(oe ->
+                {
+                    msg.append("参数:[")
+                            .append(oe.getObjectName())
+                            .append(".")
+                            .append(oe.getField())
+                            .append("]的传入值:[")
+                            .append(oe.getRejectedValue())
+                            .append("]与预期的字段类型不匹配.");
+                    log.warn(msg.toString());
+                    msg.setLength(0);
+                    msg.append(oe.getDefaultMessage());
+                }
+        );
+        return msg;
+    }
+
+    /**
      * 异常处理器
      *
      * @param e 异常
@@ -39,8 +65,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public Result<String> handleException(Exception e) {
-        log.error(e.getMessage(), e);
-        return Result.failure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        log.error("其它异常:", e);
+        return Result.failure(WebResponseInformation.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -61,25 +87,11 @@ public class GlobalExceptionHandler {
             log.warn("已忽视解析错误!");
         }
         // 参数类型不匹配检验
-        StringBuilder msg = new StringBuilder();
-        List<FieldError> fieldErrors = e.getFieldErrors();
-        fieldErrors.forEach(oe ->
-                {
-                    msg.append("参数:[")
-                            .append(oe.getObjectName())
-                            .append(".")
-                            .append(oe.getField())
-                            .append("]的传入值:[")
-                            .append(oe.getRejectedValue())
-                            .append("]与预期的字段类型不匹配.");
-                    log.warn(msg.toString());
-                    msg.setLength(0);
-                    msg.append(oe.getDefaultMessage());
-                }
-        );
+        StringBuilder msg = getValidatedMessage(e);
+        log.warn("参数校验失败详细信息:{}", msg);
         return ResponseEntity
                 .status(200)
-                .body(Result.failure(HttpStatus.BAD_REQUEST.value(), msg.toString()));
+                .body(Result.failure(WebResponseInformation.ILLEGAL_PARAMETERS));
     }
 
     /**
@@ -92,18 +104,24 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(GlobalException.class)
     public Result<String> handleGlobalException(GlobalException e) {
-        return Result.failure(e.getErrorCode(), e.getMessage());
+        return Result.failure(e.getErrorCode(), e.getErrorI18nMessageCode());
     }
 
     /**
      * 内部异常处理器
+     *
      * @param e 异常
      * @return com.gewuyou.blog.common.entity.Result<java.lang.String>
      */
     @ExceptionHandler(InternalException.class)
     public Result<String> handleGlobalException(InternalException e) {
-        return Result.failure(ResponseInformation.INNER_ERROR, SpringUtil.getBean(MessageSource.class));
+        log.error("内部异常: 异常信息: {}", e.getErrorMessage(), e);
+        log.error("i18nMessage: {}", I18nMessageUtil
+                .getI18nMessageSource()
+                .getMessage(
+                        e
+                                .getInternalInformation()
+                                .getResponseI8nMessageCode(), null, LocaleContextHolder.getLocale()));
+        return Result.failure(WebResponseInformation.INTERNAL_SERVER_ERROR);
     }
-
-
 }
