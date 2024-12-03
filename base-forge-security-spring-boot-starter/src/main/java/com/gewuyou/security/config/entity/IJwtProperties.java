@@ -1,4 +1,4 @@
-package com.gewuyou.util.config.entity;
+package com.gewuyou.security.config.entity;
 
 /**
  * jwt配置接口

@@ -1,4 +1,4 @@
-package com.gewuyou.util.entity;
+package com.gewuyou.security.entity;
 
 import lombok.Builder;
 import lombok.Getter;

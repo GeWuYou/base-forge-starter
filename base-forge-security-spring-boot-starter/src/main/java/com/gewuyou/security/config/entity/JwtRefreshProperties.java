@@ -1,4 +1,5 @@
-package com.gewuyou.util.config.entity;
+package com.gewuyou.security.config.entity;
+
 
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,9 +10,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author gewuyou
  * @since 2024-11-20 17:30:55
  */
-@ConfigurationProperties(prefix = "jwt.refresh")
+@ConfigurationProperties(prefix = "base-forge.security.jwt.refresh")
 @Setter
-public class JwtRefreshProperties implements IJwtProperties{
+public class JwtRefreshProperties implements IJwtProperties {
     /**
      * 密钥
      */
@@ -21,7 +22,7 @@ public class JwtRefreshProperties implements IJwtProperties{
      */
     private String issuer;
     /**
-     * 过期时间 (单位：秒)
+     * 过期时间 (单位：毫秒)
      */
     private long expiration;
 

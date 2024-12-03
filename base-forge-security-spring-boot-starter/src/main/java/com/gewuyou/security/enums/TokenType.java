@@ -1,4 +1,4 @@
-package com.gewuyou.util.enums;
+package com.gewuyou.security.enums;
 
 /**
  * 令牌类型
