@@ -13,7 +13,6 @@ import com.gewuyou.log.service.IExceptionLoggingDataService;
 import com.gewuyou.log.service.IOperationLoggingDataService;
 import com.gewuyou.log.service.impl.DefaultExceptionLoggingDataServiceImpl;
 import com.gewuyou.log.service.impl.DefaultOperationLoggingDataServiceImpl;
-import com.gewuyou.util.JwtUtil;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -66,13 +65,12 @@ public class LogAutoConfiguration {
      * 默认的操作日志处理器
      * @param operationLogDataService 操作日志数据服务
      * @param objectMapper 对象映射器
-     * @param jwtUtil  JWT工具类
      * @return {@link OperationLogHandler}
      */
     @Bean
     @ConditionalOnMissingBean(IOperationLogHandler.class)
-    public IOperationLogHandler createOperationLogHandler(IOperationLoggingDataService operationLogDataService, ObjectMapper objectMapper, JwtUtil jwtUtil) {
-        return new OperationLogHandler(operationLogDataService,objectMapper,jwtUtil);
+    public IOperationLogHandler createOperationLogHandler(IOperationLoggingDataService operationLogDataService, ObjectMapper objectMapper) {
+        return new OperationLogHandler(operationLogDataService,objectMapper);
     }
 
     /**

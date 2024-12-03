@@ -15,7 +15,6 @@ import com.gewuyou.redis.service.ICacheService;
 import com.gewuyou.redis.service.impl.CacheServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -75,8 +74,8 @@ public class RedisAutoConfiguration {
     }
 
     @Bean
-    public ICacheService cacheService(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate, MessageSource messageSource) {
-        return new CacheServiceImpl(objectMapper, redisTemplate, messageSource);
+    public ICacheService cacheService(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate) {
+        return new CacheServiceImpl(objectMapper, redisTemplate);
     }
 
 }

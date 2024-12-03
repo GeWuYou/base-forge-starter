@@ -1,5 +1,6 @@
 package com.gewuyou.i18n.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import java.util.Locale;
 public class I18nAutoConfiguration {
     public static final String MESSAGE_SOURCE_BEAN_NAME = "i18nMessageSource";
     @Bean(name = MESSAGE_SOURCE_BEAN_NAME)
+    @ConditionalOnMissingBean(name = MESSAGE_SOURCE_BEAN_NAME)
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         // 资源文件的前缀，默认会加载 messages.properties 等

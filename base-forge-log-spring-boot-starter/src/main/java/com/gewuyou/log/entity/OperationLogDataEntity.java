@@ -47,13 +47,9 @@ public class OperationLogDataEntity {
      */
     private String ipAddress;
     /**
-     * 用户安全认证id
+     * 用户信息
      */
-    private String userAuthId;
-    /**
-     * 用户名
-     */
-    private String username;
+    private String userDetails;
     /**
      * 耗时
      */

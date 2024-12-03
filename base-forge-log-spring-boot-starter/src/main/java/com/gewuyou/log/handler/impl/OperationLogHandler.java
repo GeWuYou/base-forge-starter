@@ -9,7 +9,6 @@ import com.gewuyou.log.handler.IOperationLogHandler;
 import com.gewuyou.log.service.IOperationLoggingDataService;
 import com.gewuyou.util.IpUtil;
 import com.gewuyou.util.JwtUtil;
-import com.gewuyou.util.enums.TokenType;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -33,16 +32,13 @@ import java.util.Objects;
 public class OperationLogHandler implements IOperationLogHandler {
     protected final IOperationLoggingDataService operationLoggingDataService;
     protected final ObjectMapper objectMapper;
-    protected final JwtUtil jwtUtil;
 
     public OperationLogHandler(
             IOperationLoggingDataService operationLoggingDataService,
-            ObjectMapper objectMapper,
-            JwtUtil jwtUtil
+            ObjectMapper objectMapper
     ) {
         this.objectMapper = objectMapper;
         this.operationLoggingDataService = operationLoggingDataService;
-        this.jwtUtil = jwtUtil;
     }
 
     /**
@@ -54,11 +50,8 @@ public class OperationLogHandler implements IOperationLogHandler {
     public void handle(OperationLogProcessingObject operationLogProcessingObject) {
         JoinPoint joinPoint = operationLogProcessingObject.getJoinPoint();
         HttpServletRequest request = operationLogProcessingObject.getRequest();
-        // 尝试获取token
-        String token = jwtUtil.getAccessToken(request);
         // 获取用户信息
-        String userAuthId = jwtUtil.getUserAuthIdFromToken(token, TokenType.Access);
-        String username = jwtUtil.getUsernameByAccessToken(token);
+        String userDetails = JwtUtil.getUserDetails(request);
         OperationLogging operationLogging = operationLogProcessingObject.getOperationLogging();
         String className = joinPoint.getTarget().getClass().getName();
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
@@ -112,8 +105,7 @@ public class OperationLogHandler implements IOperationLogHandler {
                                     .requestMethod(request.getMethod())
                                     .requestParams(requestParams)
                                     .result(resultStr)
-                                    .userAuthId(userAuthId)
-                                    .username(username)
+                                    .userDetails(userDetails)
                                     .ipAddress(ipAddress)
                                     .duration(operationLogProcessingObject.getDuration())
                                     .build());

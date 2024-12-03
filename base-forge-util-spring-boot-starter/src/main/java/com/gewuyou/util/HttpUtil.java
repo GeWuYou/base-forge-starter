@@ -2,6 +2,7 @@ package com.gewuyou.util;
 
 
 import com.gewuyou.util.exception.UtilException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
  * @author gewuyou
  * @since 2024-10-04 23:08:23
  */
+@Slf4j
 public class HttpUtil {
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
@@ -89,25 +91,37 @@ public class HttpUtil {
         return CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 构建带参数的URL
+     * @param baseUrl 基础URL
+     * @param params 请求参数
+     * @return 带参数的URL
+     */
     private static String buildUrlWithParams(String baseUrl, Map<String, Object> params) {
         StringBuilder urlBuilder = new StringBuilder(baseUrl);
-
         if (params != null && !params.isEmpty()) {
-            urlBuilder.append("?");
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                try {
-                    String key = URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8);
-                    String value = URLEncoder.encode(String.valueOf(entry.getValue()), StandardCharsets.UTF_8);
-                    urlBuilder.append(key).append("=").append(value).append("&");
-                } catch (Exception e) {
-                    throw new UtilException("URL参数编码失败");
-                }
-            }
-            // 去掉最后一个多余的 &
-            urlBuilder.setLength(urlBuilder.length() - 1);
+            splicingParams(params, urlBuilder);
         }
-
         return urlBuilder.toString();
     }
 
+    /**
+     * 拼接参数到URL中
+     * @param params 请求参数
+     * @param urlBuilder URL构建器
+     */
+    private static void splicingParams(Map<String, Object> params, StringBuilder urlBuilder) {
+        urlBuilder.append("?");
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            try {
+                String key = URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8);
+                String value = URLEncoder.encode(String.valueOf(entry.getValue()), StandardCharsets.UTF_8);
+                urlBuilder.append(key).append("=").append(value).append("&");
+            } catch (Exception e) {
+                throw new UtilException("URL参数编码失败");
+            }
+        }
+        // 去掉最后一个多余的 &
+        urlBuilder.setLength(urlBuilder.length() - 1);
+    }
 }

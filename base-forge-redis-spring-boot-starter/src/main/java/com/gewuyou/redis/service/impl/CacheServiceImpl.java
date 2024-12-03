@@ -3,11 +3,10 @@ package com.gewuyou.redis.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gewuyou.i18n.enums.ResponseInformation;
 import com.gewuyou.redis.exception.CacheException;
+import com.gewuyou.redis.i18n.enums.CacheResponseInformation;
 import com.gewuyou.redis.service.ICacheService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
@@ -33,18 +32,15 @@ import java.util.concurrent.TimeUnit;
 public class CacheServiceImpl implements ICacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final MessageSource messageSource;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public CacheServiceImpl(
             ObjectMapper objectMapper,
-            RedisTemplate<String, Object> redisTemplate,
-            MessageSource messageSource
+            RedisTemplate<String, Object> redisTemplate
     ) {
         this.objectMapper = objectMapper;
         this.redisTemplate = redisTemplate;
-        this.messageSource = messageSource;
     }
 
     /**
@@ -55,7 +51,7 @@ public class CacheServiceImpl implements ICacheService {
     public void clearTopNamespace(String topNamespace) {
         String pattern = topNamespace + ":*";
         Set<String> keys = redisTemplate.keys(pattern);
-        if (keys != null && !keys.isEmpty()) {
+        if (!keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }
@@ -69,7 +65,7 @@ public class CacheServiceImpl implements ICacheService {
     public void clearNamespace(String topNamespace, String namespace) {
         String pattern = topNamespace + ":" + namespace + ":*";
         Set<String> keys = redisTemplate.keys(pattern);
-        if (keys != null && !keys.isEmpty()) {
+        if (!keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }
@@ -148,7 +144,7 @@ public class CacheServiceImpl implements ICacheService {
             String jsonValue = objectMapper.writeValueAsString(value);
             redisTemplate.opsForValue().set(key, jsonValue, timeout, unit);
         } catch (JsonProcessingException e) {
-            throw new CacheException(ResponseInformation.JSON_SERIALIZE_ERROR,messageSource);
+            throw new CacheException(CacheResponseInformation.JSON_SERIALIZE_ERROR.getResponseI8nMessageCode());
         }
     }
 
@@ -181,7 +177,7 @@ public class CacheServiceImpl implements ICacheService {
         try {
             return objectMapper.readValue(jsonValue, clazz);
         } catch (JsonProcessingException e) {
-            throw new CacheException(ResponseInformation.JSON_DESERIALIZE_ERROR,messageSource);
+            throw new CacheException("JSON反序列化失败",CacheResponseInformation.JSON_DESERIALIZE_ERROR);
         }
     }
 
@@ -201,7 +197,7 @@ public class CacheServiceImpl implements ICacheService {
         try {
             return objectMapper.readValue(jsonValue, typeReference);
         } catch (JsonProcessingException e) {
-            throw new CacheException(ResponseInformation.JSON_DESERIALIZE_ERROR,messageSource);
+            throw new CacheException("JSON反序列化失败",CacheResponseInformation.JSON_DESERIALIZE_ERROR);
         }
     }
 

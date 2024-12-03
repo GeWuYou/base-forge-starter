@@ -1,6 +1,5 @@
 package com.gewuyou.i18n.enums;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -9,8 +8,7 @@ import org.springframework.http.HttpStatus;
  * @author gewuyou
  * @since 2024-10-03 10:41:45
  */
-@Getter
-public enum ResponseInformation {
+public enum ResponseInformation implements com.gewuyou.i18n.entity.ResponseInformation {
     OPERATION_SUCCESSFUL(HttpStatus.OK.value(), "operation.success"),
     JSON_SERIALIZE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "json.serialize.error"),
     JSON_DESERIALIZE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "json.deserialize.error"),
@@ -54,5 +52,25 @@ public enum ResponseInformation {
     ResponseInformation(int code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    /**
+     * 获取响应码
+     *
+     * @return 响应码
+     */
+    @Override
+    public int getResponseCode() {
+        return this.code;
+    }
+
+    /**
+     * 获取i18n响应信息code
+     *
+     * @return 响应信息 code
+     */
+    @Override
+    public String getResponseI8nMessageCode() {
+        return this.message;
     }
 }

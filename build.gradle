@@ -27,6 +27,7 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
 subprojects {
     apply {
         plugin('idea')
@@ -74,16 +75,19 @@ subprojects {
             dependency "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
             dependency "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
             dependency "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+
             dependency("org.projectlombok:lombok:${lombokVersion}")
             dependency("com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}")
             dependency("org.redisson:redisson-spring-boot-starter:${redissonVersion}")
             dependency("org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}")
+
             dependency("com.gewuyou:base-forge-i18n-spring-boot-starter:${baseForgeI18nVersion}")
             dependency("com.gewuyou:base-forge-json-spring-boot-starter:${baseForgeJsonVersion}")
             dependency("com.gewuyou:base-forge-redis-spring-boot-starter:${baseForgeRedisVersion}")
             dependency("com.gewuyou:base-forge-util-spring-boot-starter:${baseForgeUtilVersion}")
             dependency("com.gewuyou:base-forge-web-spring-boot-starter:${baseForgeWebVersion}")
             dependency("com.gewuyou:base-forge-core-spring-boot-starter:${baseForgeCoreVersion}")
+
             dependency("io.jsonwebtoken:jjwt-api:${jjwtVersion}")
             dependency("io.jsonwebtoken:jjwt-impl:${jjwtVersion}")
             dependency("io.jsonwebtoken:jjwt-jackson:${jjwtVersion}")

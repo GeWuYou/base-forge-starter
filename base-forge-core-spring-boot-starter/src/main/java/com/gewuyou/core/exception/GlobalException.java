@@ -1,6 +1,7 @@
 package com.gewuyou.core.exception;
 
-import com.gewuyou.i18n.enums.ResponseInformation;
+
+import com.gewuyou.i18n.entity.ResponseInformation;
 import com.gewuyou.i18n.exception.I18nBaseException;
 
 /**

@@ -1,5 +1,6 @@
 package com.gewuyou.core.exception;
 
+import com.gewuyou.i18n.entity.InternalInformation;
 import lombok.Getter;
 
 /**
@@ -11,6 +12,10 @@ import lombok.Getter;
 @Getter
 public class InternalException extends RuntimeException {
     private final String errorMessage;
+    /**
+     * 可选(国际化内部错误信息码)
+     */
+    private InternalInformation internalInformation;
 
     /**
      * Constructs a new runtime exception with {@code null} as its
@@ -19,5 +24,10 @@ public class InternalException extends RuntimeException {
      */
     public InternalException(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public InternalException(String errorMessage,InternalInformation internalInformation) {
+        this.errorMessage = errorMessage;
+        this.internalInformation = internalInformation;
     }
 }
