@@ -1,0 +1,11 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation project(":base-forge-i18n-spring-boot-starter")
+    implementation project(":base-forge-core-spring-boot-starter")
+    implementation project(":base-forge-web-spring-boot-starter")
+    implementation project(":base-forge-redis-spring-boot-starter")
+    implementation(project(':base-forge-security-authentication-spring-boot-starter'))
+    implementation project(':base-forge-json-spring-boot-starter')
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
+}
