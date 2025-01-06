@@ -1,0 +1,58 @@
+// This file is used to manage the dependencies of the project.
+ext {
+    set('jacksonVersion', '2.18.1')
+    set('mybatisPlusVersion', "3.5.8")
+    set('redissonVersion', "3.37.0")
+    set('springBootVersion', "3.3.4")
+    set('lombokVersion', "1.18.34")
+    set('springDocVersion', "2.6.0")
+    set('userAgentUtilsVersion', "1.21")
+    set('jjwtVersion', '0.12.6')
+    set('grpcVersion', "1.68.0")
+    set('commonsLang3Version', "3.17.0")
+    set('kotlinVersion', '2.1.0')
+    set('baseForgeI18nVersion', '1.0.4')
+    set('baseForgeUtilVersion', '1.0.1')
+    set('baseForgeJsonVersion', '1.0.1')
+    set('baseForgeRedisVersion', '1.0.1')
+    set('baseForgeWebVersion', '1.0.0')
+    set('baseForgeWebAutoConfigureVersion', '1.0.0')
+    set('baseForgeCoreVersion', '1.0.0')
+    set('baseForgeSecurityVersion', '1.0.0')
+    set('baseForgeSecurityAutoConfigureVersion', '1.0.0')
+}
+dependencyManagement {
+    imports {
+        mavenBom("org.jetbrains.kotlin:kotlin-bom:${kotlinVersion}")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        mavenBom("io.grpc:grpc-bom:${grpcVersion}")
+    }
+    dependencies {
+        dependency("org.apache.commons:commons-lang3:${commonsLang3Version}")
+
+        dependency "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+        dependency "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+        dependency "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+        dependency "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+
+        dependency("org.projectlombok:lombok:${lombokVersion}")
+        dependency("com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}")
+        dependency("org.redisson:redisson-spring-boot-starter:${redissonVersion}")
+        dependency("org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}")
+        dependency("eu.bitwalker:UserAgentUtils:${userAgentUtilsVersion}")
+
+        dependency("com.gewuyou:base-forge-i18n-spring-boot-starter:${baseForgeI18nVersion}")
+        dependency("com.gewuyou:base-forge-json-spring-boot-starter:${baseForgeJsonVersion}")
+        dependency("com.gewuyou:base-forge-redis-spring-boot-starter:${baseForgeRedisVersion}")
+        dependency("com.gewuyou:base-forge-util-spring-boot-starter:${baseForgeUtilVersion}")
+        dependency("com.gewuyou:base-forge-web-spring-boot-starter-autoconfigure:${baseForgeWebAutoConfigureVersion}")
+        dependency("com.gewuyou:base-forge-web-spring-boot-starter:${baseForgeWebVersion}")
+        dependency("com.gewuyou:base-forge-core-spring-boot-starter:${baseForgeCoreVersion}")
+        dependency("com.gewuyou:base-forge-security-spring-boot-starter:${baseForgeSecurityVersion}")
+        dependency("com.gewuyou:base-forge-security-spring-boot-starter-autoconfigure:${baseForgeSecurityAutoConfigureVersion}")
+
+        dependency("io.jsonwebtoken:jjwt-api:${jjwtVersion}")
+        dependency("io.jsonwebtoken:jjwt-impl:${jjwtVersion}")
+        dependency("io.jsonwebtoken:jjwt-jackson:${jjwtVersion}")
+    }
+}

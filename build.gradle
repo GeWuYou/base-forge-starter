@@ -1,104 +1,56 @@
 plugins {
+    // 用于生成 IntelliJ IDEA 的项目文件，便于在 IDEA 中打开和管理项目
     id 'idea'
+    // 应用 Java 插件，提供基本的 Java 代码编译和构建能力
     id 'java'
+    // 应用 Java Library 插件，支持库开发，提供 API 和实现分离的能力
     id 'java-library'
+    // 应用 Maven 发布插件，支持项目的构建产物发布到 Maven 仓库
     id 'maven-publish'
-    // id 'org.springframework.boot' version '3.3.4'
+    // Spring 依赖管理插件，简化依赖版本管理
     id 'io.spring.dependency-management' version '1.1.6'
+    // 引入kt
+    id 'org.jetbrains.kotlin.jvm' version '2.1.0'
+    id 'org.jetbrains.kotlin.plugin.spring' version '2.1.0'
+}
+/**
+ * 由于 Kotlin 插件被引入时会自动添加依赖，但根项目不需要 Kotlin 依赖，因此需要排除 Kotlin 依赖
+ */
+configurations.configureEach {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
 }
 
-ext {
-    set('jacksonVersion', '2.18.1')
-    set('mybatisPlusVersion', "3.5.8")
-    set('redissonVersion', "3.37.0")
-    set('springBootVersion', "3.3.4")
-    set('lombokVersion', "1.18.34")
-    set('springDocVersion', "2.6.0")
-    set('baseForgeI18nVersion', '1.0.4')
-    set('baseForgeUtilVersion', '1.0.1')
-    set('baseForgeJsonVersion', '1.0.1')
-    set('baseForgeRedisVersion', '1.0.1')
-    set('baseForgeWebVersion', '1.0.0')
-    set('baseForgeCoreVersion', '1.0.0')
-    set('jjwtVersion', '0.12.6')
-}
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
-
 subprojects {
+    def configDir = "$rootDir/config/"
+    def tasksDir = "$configDir/tasks/"
     apply {
         plugin('idea')
         plugin('java')
         plugin('java-library')
         plugin('maven-publish')
-        // plugin('org.springframework.boot')
         plugin('io.spring.dependency-management')
-    }
-    repositories {
-        mavenLocal()
-        maven {
-            url 'https://raw.githubusercontent.com/eurotech/kura_addons/mvn-repo/'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/public/'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/spring/'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/spring-plugin/'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/gradle-plugin/'
-        }
-        mavenCentral()
-    }
-
-    dependencies {
-        implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-        implementation 'org.springframework.boot:spring-boot-starter'
-        implementation 'org.springframework.boot:spring-boot-configuration-processor'
-        implementation 'org.springframework.boot:spring-boot-autoconfigure'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-    }
-    dependencyManagement {
-        imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-        }
-        dependencies {
-            dependency "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-            dependency "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-            dependency "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
-            dependency "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-
-            dependency("org.projectlombok:lombok:${lombokVersion}")
-            dependency("com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}")
-            dependency("org.redisson:redisson-spring-boot-starter:${redissonVersion}")
-            dependency("org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}")
-
-            dependency("com.gewuyou:base-forge-i18n-spring-boot-starter:${baseForgeI18nVersion}")
-            dependency("com.gewuyou:base-forge-json-spring-boot-starter:${baseForgeJsonVersion}")
-            dependency("com.gewuyou:base-forge-redis-spring-boot-starter:${baseForgeRedisVersion}")
-            dependency("com.gewuyou:base-forge-util-spring-boot-starter:${baseForgeUtilVersion}")
-            dependency("com.gewuyou:base-forge-web-spring-boot-starter:${baseForgeWebVersion}")
-            dependency("com.gewuyou:base-forge-core-spring-boot-starter:${baseForgeCoreVersion}")
-
-            dependency("io.jsonwebtoken:jjwt-api:${jjwtVersion}")
-            dependency("io.jsonwebtoken:jjwt-impl:${jjwtVersion}")
-            dependency("io.jsonwebtoken:jjwt-jackson:${jjwtVersion}")
-        }
+        plugin('org.jetbrains.kotlin.jvm')
+        plugin('org.jetbrains.kotlin.plugin.spring')
+        // 导入仓库配置
+        from(file("$configDir/repositories.gradle"))
+        // 导入依赖管理配置
+        from(file("$configDir/dependencyManagement.gradle"))
+        // 导入源代码任务
+        from(file("$tasksDir/sourceTask.gradle"))
+        // 导入发布配置
+        from(file("$configDir/publishing.gradle"))
+        // 导入依赖配置
+        from(file("$configDir/dependencies.gradle"))
     }
     jar {
         enabled = true
     }
 }
-
-
 tasks.named('test') {
     useJUnitPlatform()
 }

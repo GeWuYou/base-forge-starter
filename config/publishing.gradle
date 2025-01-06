@@ -1,0 +1,82 @@
+// This file is used to configure the publishing of the project.
+publishing {
+    repositories {
+        maven {
+            name = 'localRepo'
+            url = "file://D:/Maven/mvn_repository"
+        }
+    }
+}
+/**
+ * 配置发布信息
+ * @param name 发布器名称
+ * @param groupId 组id
+ * @param artifactId 项目id
+ * @param version 版本号
+ * @return 发布配置
+ */
+def configurePublishing(String name, String groupId, String artifactId, String version) {
+    publishing {
+        publications {
+            create(name, MavenPublication) {
+                it.groupId = groupId
+                it.artifactId = artifactId
+                it.version = version
+                from components.java
+                // 定义版本映射
+                versionMapping {
+                    usage('java-api') {
+                        // 指示Gradle在解析下游依赖项时，从runtimeClasspath的解析结果中获取对应版本
+                        fromResolutionOf('runtimeClasspath')
+                    }
+
+                    usage('java-runtime') {
+                        // 指示在运行时收集版本信息，适用于运行时环境中的依赖项。
+                        fromResolutionResult()
+                    }
+                }
+                // 如果需要将源代码包添加到发布中，可以添加如下代码 sourceTask 来自自定义任务
+                artifact sourceTask
+            }
+        }
+    }
+}
+
+List.of(
+        new PublishProject("async", "base-forge-async-spring-boot-starter", "1.0.0"),
+        new PublishProject("core", "base-forge-core-spring-boot-starter", "1.0.0"),
+        new PublishProject("i18n", "base-forge-i18n-spring-boot-starter", "1.0.4"),
+        new PublishProject("json", "base-forge-json-spring-boot-starter", "1.0.1"),
+        new PublishProject("log", "base-forge-log-spring-boot-starter", "1.0.0"),
+        new PublishProject("logAutoconfigure", "base-forge-log-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("mybatisExtension", "base-forge-mybatis-extension-spring-boot-starter", "1.0.0"),
+        new PublishProject("redis", "base-forge-redis-spring-boot-starter", "1.0.1"),
+        new PublishProject("security", "base-forge-security-spring-boot-starter", "1.0.0"),
+        new PublishProject("securityAutoconfigure", "base-forge-security-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("util", "base-forge-util-spring-boot-starter", "1.0.1"),
+        new PublishProject("web", "base-forge-web-spring-boot-starter", "1.0.0"),
+        new PublishProject("webAutoconfigure", "base-forge-web-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("grpc", "base-forge-grpc-spring-boot-starter", "1.0.0")
+)
+        .stream()
+        .filter { (project.name == it.artifactId) }
+        .forEach { project ->
+            configurePublishing(project.publicationName, project.groupId, project.artifactId, project.version)
+        }
+// 发布项目配置
+/**
+ * 发布项目配置类
+ */
+class PublishProject {
+    String publicationName
+    String groupId = "com.gewuyou"
+    String artifactId
+    String version
+
+    PublishProject(String publicationName, String artifactId, String version) {
+        this.publicationName = publicationName
+        this.artifactId = artifactId
+        this.version = version
+    }
+
+}
