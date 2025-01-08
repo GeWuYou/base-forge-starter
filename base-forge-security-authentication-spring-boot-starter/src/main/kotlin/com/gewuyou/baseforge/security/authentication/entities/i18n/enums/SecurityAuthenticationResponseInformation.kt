@@ -21,24 +21,9 @@ enum class SecurityAuthenticationResponseInformation(
     LOGIN_SUCCESS(HttpStatus.OK.value(), "security.response.login.success"),
 
     /**
-     * 登录已过期
-     */
-    LoginHasExpired(HttpStatus.UNAUTHORIZED.value(), "security.response.login.expired"),
-
-    /**
-     * 登录已失效
-     */
-    LOGIN_IS_INVALID(HttpStatus.PAYMENT_REQUIRED.value(), "security.response.login.invalid"),
-
-    /**
      * 账户已禁用
      */
     ACCOUNT_IS_DISABLED(HttpStatus.FORBIDDEN.value(), "security.response.account.disabled"),
-
-    /**
-     * 账户已过期
-     */
-    ACCOUNT_HAS_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "security.response.account.expired"),
 
     /**
      * 账户凭证已过期
@@ -56,16 +41,6 @@ enum class SecurityAuthenticationResponseInformation(
     LoginFailed(HttpStatus.UNAUTHORIZED.value(), "security.response.login.failed"),
 
     /**
-     * 权限不足
-     */
-    PERMISSION_DENIED(HttpStatus.FORBIDDEN.value(), "security.response.permission.denied"),
-
-    /**
-     * 未知错误
-     */
-    UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "security.response.unknown.error"),
-
-    /**
      * 密码未提供
      */
     PASSWORD_NOT_PROVIDED(HttpStatus.BAD_REQUEST.value(), "security.response.password.not.provided"),
@@ -81,11 +56,6 @@ enum class SecurityAuthenticationResponseInformation(
     DUPLICATE_SIGN_IN_REQUESTS(HttpStatus.BAD_REQUEST.value(), "security.response.login.repeat"),
 
     /**
-     * 认证已过期
-     */
-    CERTIFICATION_HAS_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "security.response.certificate.expired"),
-
-    /**
      * 内部错误
      */
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "invalid.server.error"),
@@ -99,11 +69,6 @@ enum class SecurityAuthenticationResponseInformation(
      * 密码已被泄露
      */
     PASSWORD_COMPROMISED(HttpStatus.UNAUTHORIZED.value(), "security.response.password.compromised"),
-
-    /**
-     * 认证失败
-     */
-    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED.value(), "security.response.certificate.failed"),
     ;
 
     override fun getResponseCode(): Int {

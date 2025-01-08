@@ -3,9 +3,11 @@ package com.gewuyou.baseforge.security.authentication.entities.token;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * 普通登录请求令牌</br>
@@ -22,11 +24,28 @@ public class NormalAuthenticationToken extends AbstractAuthenticationToken {
     /**
      * 用户唯一标识(通常在登录前为用户名 邮箱或手机号)
      */
-    private final Object principal;
+    private transient Object principal;
     /**
      * 用户登录传递的凭证(密码)
      */
-    private Object credentials;
+    private transient Object credentials;
+
+    public NormalAuthenticationToken(UserDetails userDetails, Collection<? extends GrantedAuthority> authorities) {
+        super(authorities);
+        setDetails(userDetails);
+        super.setAuthenticated(true);
+    }
+
+    /**
+     * 创建未认证的令牌
+     *
+     * @param principal   登录唯一标识(通常在登录前为用户名 邮箱或手机号)
+     * @param credentials 登录凭证
+     * @return 未认证的令牌
+     */
+    public static NormalAuthenticationToken unauthenticated(Object principal, Object credentials) {
+        return new NormalAuthenticationToken(principal, credentials);
+    }
 
 
     public NormalAuthenticationToken(Object principal, Object credentials) {
@@ -44,26 +63,42 @@ public class NormalAuthenticationToken extends AbstractAuthenticationToken {
     }
 
     /**
-     * 创建未认证的令牌
-     *
-     * @param principal   登录信息
-     * @param credentials 登录凭证
-     * @return 未认证的令牌
-     */
-    public static NormalAuthenticationToken unauthenticated(Object principal, Object credentials) {
-        return new NormalAuthenticationToken(principal, credentials);
-    }
-
-    /**
      * 创建已认证的令牌
      *
-     * @param principal   登录信息
+     * @param principal   用户唯一标识(通常在登录前为用户名 邮箱或手机号)
      * @param credentials 登录凭证
      * @param authorities 权限
      * @return 已认证的令牌
      */
     public static NormalAuthenticationToken authenticated(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         return new NormalAuthenticationToken(principal, credentials, authorities);
+    }
+
+    /**
+     * 创建已认证的令牌
+     *
+     * @param userDetails 登录信息
+     * @param authorities 权限
+     * @return 已认证的令牌
+     */
+    public static NormalAuthenticationToken authenticated(UserDetails userDetails,Collection<? extends GrantedAuthority> authorities) {
+        return new NormalAuthenticationToken(userDetails, authorities);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof NormalAuthenticationToken that)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        return Objects.equals(principal, that.principal) && Objects.equals(credentials, that.credentials);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), principal, credentials);
     }
 
     @Override

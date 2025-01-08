@@ -27,7 +27,7 @@ class AuthenticationExceptionHandler(
         response.status = HttpStatus.UNAUTHORIZED.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         val writer = response.writer
-        writer.print(objectMapper.writeValueAsString(Result.failure<String>(SecurityAuthenticationResponseInformation.AUTHENTICATION_FAILED)))
+        writer.print(objectMapper.writeValueAsString(Result.failure<String>(SecurityAuthenticationResponseInformation.LoginFailed)))
         writer.flush()
         writer.close()
     }

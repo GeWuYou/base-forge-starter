@@ -14,6 +14,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 @Getter
 public class SecurityAuthenticationProperties {
+    /**
+     * 登录基础地址
+     */
     private String baseLoginUrl = "/auth/login";
     /**
      * 普通登录页面地址(用户唯一标识符：密码登录)

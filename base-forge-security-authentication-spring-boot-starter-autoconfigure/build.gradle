@@ -6,6 +6,6 @@ dependencies {
     implementation project(":base-forge-redis-spring-boot-starter")
     implementation(project(':base-forge-security-authentication-spring-boot-starter'))
     implementation project(':base-forge-json-spring-boot-starter')
-
+    implementation project(":base-forge-json-spring-boot-starter")
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
 }

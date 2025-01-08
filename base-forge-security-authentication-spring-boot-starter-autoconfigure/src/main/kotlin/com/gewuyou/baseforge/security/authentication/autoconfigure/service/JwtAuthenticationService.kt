@@ -1,33 +1,23 @@
 package com.gewuyou.baseforge.security.authentication.autoconfigure.service
 
 /**
- * jwt 服务
+ * JWT 身份验证服务
  *
  * @author gewuyou
  * @since 2024-12-31 16:55:47
  */
-interface JwtService {
+interface JwtAuthenticationService {
     /**
      * 生成访问token
      *
-     * @param userDetails 用户信息Json字符串
+     * @param principal 用户唯一标识
+     * @param deviceId  设备唯一标识
      * @param otherClaims 其他声明
      * @return java.lang.String token
      * @apiNote
      * @since 2023/7/2 19:45
      */
-    fun generateToken(userDetails: String, otherClaims: Map<String, Any>?): String
-
-    /**
-     * 生成访问token
-     *
-     * @param userDetails 用户信息对象
-     * @param otherClaims 其他声明
-     * @return java.lang.String token
-     * @apiNote
-     * @since 2023/7/2 19:45
-     */
-    fun generateToken(userDetails: Any, otherClaims: Map<String, Any>?): String
+    fun generateToken(principal: String, deviceId: String, otherClaims: Map<String, Any>?): String
 
     /**
      * 生成刷新token

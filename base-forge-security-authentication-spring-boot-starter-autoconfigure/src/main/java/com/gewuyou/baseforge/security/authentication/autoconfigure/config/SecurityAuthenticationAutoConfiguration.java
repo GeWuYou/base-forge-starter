@@ -9,7 +9,7 @@ import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.Login
 import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.LoginSuccessJsonResponseHandler;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.LogoutSuccessJsonResponseHandler;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.provider.NormalAuthenticationProvider;
-import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtService;
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtAuthenticationService;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.UserDetailsService;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,8 +49,8 @@ public class SecurityAuthenticationAutoConfiguration {
      * @throws InternalException 内部异常
      */
     @Bean
-    @ConditionalOnMissingBean(JwtService.class)
-    public JwtService createJwtService() {
+    @ConditionalOnMissingBean(JwtAuthenticationService.class)
+    public JwtAuthenticationService createJwtService() {
         throw new InternalException("请实现JwtService接口用于提供jwt服务!");
     }
 
@@ -75,10 +75,10 @@ public class SecurityAuthenticationAutoConfiguration {
     @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
     public AuthenticationSuccessHandler createLoginSuccessHandler(
             ObjectMapper objectMapper,
-            JwtService jwtService,
+            JwtAuthenticationService jwtAuthenticationService,
             UserDetailsService userDetailsService
     ) {
-        return new LoginSuccessJsonResponseHandler(objectMapper, jwtService, userDetailsService);
+        return new LoginSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, userDetailsService);
     }
 
     /**
@@ -192,12 +192,12 @@ public class SecurityAuthenticationAutoConfiguration {
      * 登出成功处理器
      *
      * @param objectMapper json对象映射器
-     * @param jwtService   jwt服务
+     * @param jwtAuthenticationService   jwt服务
      * @return 登出成功处理器
      */
     @Bean
     @ConditionalOnMissingBean(LogoutSuccessHandler.class)
-    public LogoutSuccessHandler createLogoutSuccessHandler(ObjectMapper objectMapper, JwtService jwtService) {
-        return new LogoutSuccessJsonResponseHandler(objectMapper, jwtService);
+    public LogoutSuccessHandler createLogoutSuccessHandler(ObjectMapper objectMapper, JwtAuthenticationService jwtAuthenticationService) {
+        return new LogoutSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService);
     }
 }

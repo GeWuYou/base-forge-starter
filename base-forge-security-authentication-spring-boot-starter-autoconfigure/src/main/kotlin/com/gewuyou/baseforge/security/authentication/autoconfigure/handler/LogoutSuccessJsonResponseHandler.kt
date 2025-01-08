@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.gewuyou.baseforge.core.extension.getAccessToken
 import com.gewuyou.baseforge.core.extension.getJsonBody
 import com.gewuyou.baseforge.entities.web.entity.Result
-import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtService
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtAuthenticationService
 import com.gewuyou.baseforge.security.authentication.entities.entity.request.LogoutRequest
 import com.gewuyou.baseforge.security.authentication.entities.i18n.enums.SecurityAuthenticationResponseInformation
 import jakarta.servlet.http.HttpServletRequest
@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
  */
 class LogoutSuccessJsonResponseHandler(
     private val objectMapper: ObjectMapper,
-    private val jwtService: JwtService
+    private val jwtAuthenticationService: JwtAuthenticationService
 ) :LogoutSuccessHandler{
     override fun onLogoutSuccess(
         request: HttpServletRequest,
@@ -37,14 +37,14 @@ class LogoutSuccessJsonResponseHandler(
             throw IllegalArgumentException("Access token is missing")
         }
         // 将携带的访问令牌加入黑名单
-        jwtService.addAccessTokenToBlacklist(requestData.principal,requestData.deviceId,accessToken)
+        jwtAuthenticationService.addAccessTokenToBlacklist(requestData.principal,requestData.deviceId,accessToken)
         // 从缓存中移除用户的刷新令牌
-        jwtService.removeRefreshToken(requestData.principal,requestData.deviceId,requestData.refreshToken)
+        jwtAuthenticationService.removeRefreshToken(requestData.principal,requestData.deviceId,requestData.refreshToken)
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         val writer = response.writer
         writer.print(
             objectMapper.writeValueAsString(
-                Result.success<Void>(SecurityAuthenticationResponseInformation.LOGIN_SUCCESS)
+                Result.success<Any>(SecurityAuthenticationResponseInformation.LOGIN_SUCCESS)
             )
         )
         writer.flush()

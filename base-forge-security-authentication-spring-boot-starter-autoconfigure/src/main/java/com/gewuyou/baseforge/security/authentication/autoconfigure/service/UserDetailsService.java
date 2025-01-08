@@ -14,12 +14,12 @@ import java.util.Optional;
  */
 public interface UserDetailsService {
     /**
-     * 根据signInId查询用户详细信息
+     * 根据用户唯一标识查询用户详细信息
      * @param principal 用户唯一标识 通常为用户名 手机号 邮箱等
      * @return UserDetails 用户详细信息
      * @throws SignInIdNotFoundException signInId不存在异常
      */
-    Optional<UserDetails> loadUserBySignInId(Object principal) throws SignInIdNotFoundException;
+    Optional<? extends UserDetails> loadUserBySignInId(Object principal) throws SignInIdNotFoundException;
 
     /**
      * 根据用户唯一标识查询用户唯一标识

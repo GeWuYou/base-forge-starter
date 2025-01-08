@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.gewuyou.baseforge.core.extension.getDeviceId
 import com.gewuyou.baseforge.core.extension.log
 import com.gewuyou.baseforge.entities.web.entity.Result
-import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtService
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtAuthenticationService
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.UserDetailsService
 import com.gewuyou.baseforge.security.authentication.entities.exception.AuthenticationException
 import com.gewuyou.baseforge.security.authentication.entities.i18n.enums.SecurityAuthenticationResponseInformation
@@ -25,7 +25,7 @@ import java.util.*
  */
 class LoginSuccessJsonResponseHandler(
     private val objectMapper: ObjectMapper,
-    private val jwtService: JwtService,
+    private val jwtAuthenticationService: JwtAuthenticationService,
     private val userDetailsService: UserDetailsService
 ) :
     AbstractAuthenticationTargetUrlRequestHandler(), AuthenticationSuccessHandler {
@@ -49,10 +49,10 @@ class LoginSuccessJsonResponseHandler(
         }
         // 生成access token
         val accessToken =
-            jwtService
-                .generateToken(objectMapper.writeValueAsString(userDetails), null)
+            jwtAuthenticationService
+                .generateToken(principal,deviceId,null)
         // 生成刷新token
-        val refreshToken = jwtService.generateRefreshToken(principal, deviceId)
+        val refreshToken = jwtAuthenticationService.generateRefreshToken(principal, deviceId)
         // 生成返回结果
         val result = mapOf(
             "access_token" to accessToken,
