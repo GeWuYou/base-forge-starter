@@ -1,0 +1,5 @@
+
+dependencies {
+    api project(":base-forge-core-spring-boot-starter")
+    api project(":base-forge-i18n-spring-boot-starter")
+}

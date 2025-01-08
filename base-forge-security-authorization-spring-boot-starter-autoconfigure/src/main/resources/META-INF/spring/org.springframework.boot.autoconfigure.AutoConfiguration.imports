@@ -1,0 +1,2 @@
+com.gewuyou.baseforge.security.authorization.autoconfigure.config.AuthorizationSpringSecurityConfiguration
+com.gewuyou.baseforge.security.authorization.autoconfigure.config.SecurityAuthorizationAutoConfiguration
