@@ -1,8 +1,8 @@
-package com.gewuyou.core.exception;
+package com.gewuyou.baseforge.core.exception;
 
 
-import com.gewuyou.i18n.entity.ResponseInformation;
-import com.gewuyou.i18n.exception.I18nBaseException;
+import com.gewuyou.baseforge.autoconfigure.i18n.entity.ResponseInformation;
+import com.gewuyou.baseforge.autoconfigure.i18n.exception.I18nBaseException;
 
 /**
  * 全局异常

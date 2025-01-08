@@ -1,6 +1,7 @@
-package com.gewuyou.core.exception;
+package com.gewuyou.baseforge.core.exception;
 
-import com.gewuyou.i18n.entity.InternalInformation;
+
+import com.gewuyou.baseforge.autoconfigure.i18n.entity.InternalInformation;
 import lombok.Getter;
 
 /**
@@ -15,15 +16,17 @@ public class InternalException extends RuntimeException {
     /**
      * 可选(国际化内部错误信息码)
      */
-    private InternalInformation internalInformation;
+    private final transient InternalInformation internalInformation;
 
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
+     * @param errorMessage the detail message.
      */
     public InternalException(String errorMessage) {
         this.errorMessage = errorMessage;
+        this.internalInformation = null;
     }
 
     public InternalException(String errorMessage,InternalInformation internalInformation) {
