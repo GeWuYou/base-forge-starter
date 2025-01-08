@@ -1,7 +1,7 @@
-package com.gewuyou.util;
+package com.gewuyou.baseforge.autoconfigure.util;
 
 
-import com.gewuyou.util.exception.UtilException;
+import com.gewuyou.baseforge.autoconfigure.util.exception.UtilException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
@@ -65,7 +65,7 @@ public class CompletableFutureUtil {
      * @param executor 执行的线程池
      * @return CompletableFuture对象
      */
-    public static CompletableFuture<Void> runAsyncWithExceptionAlly(Runnable runnable, Executor executor, Function<Throwable, ? extends Void> fn) {
+    public static CompletableFuture<Void> runAsyncWithExceptionAlly(Runnable runnable, Executor executor, Function<Throwable, Void> fn) {
         return CompletableFuture
                 .runAsync(runnable, executor)
                 .exceptionally(fn);

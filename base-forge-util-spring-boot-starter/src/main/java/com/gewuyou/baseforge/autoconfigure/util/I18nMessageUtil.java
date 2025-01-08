@@ -1,6 +1,7 @@
-package com.gewuyou.util;
+package com.gewuyou.baseforge.autoconfigure.util;
 
-import com.gewuyou.i18n.config.I18nAutoConfiguration;
+
+import com.gewuyou.baseforge.autoconfigure.i18n.config.I18nAutoConfiguration;
 import org.springframework.context.MessageSource;
 
 /**
@@ -10,6 +11,9 @@ import org.springframework.context.MessageSource;
  * @since 2024-11-25 17:40:12
  */
 public class I18nMessageUtil {
+    private I18nMessageUtil() {
+    }
+
     /**
      * 获取i18n消息源
      * @return i18n消息源

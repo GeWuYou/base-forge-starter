@@ -1,4 +1,4 @@
-package com.gewuyou.util;
+package com.gewuyou.baseforge.autoconfigure.util;
 
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeansException;

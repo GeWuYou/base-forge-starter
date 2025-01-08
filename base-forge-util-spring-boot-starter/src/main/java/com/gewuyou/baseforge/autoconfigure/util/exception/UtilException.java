@@ -1,6 +1,7 @@
-package com.gewuyou.util.exception;
+package com.gewuyou.baseforge.autoconfigure.util.exception;
 
-import com.gewuyou.core.exception.InternalException;
+
+import com.gewuyou.baseforge.core.exception.InternalException;
 
 /**
  *工具异常

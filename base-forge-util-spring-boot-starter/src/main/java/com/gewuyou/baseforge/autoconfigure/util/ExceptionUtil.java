@@ -1,4 +1,4 @@
-package com.gewuyou.util;
+package com.gewuyou.baseforge.autoconfigure.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

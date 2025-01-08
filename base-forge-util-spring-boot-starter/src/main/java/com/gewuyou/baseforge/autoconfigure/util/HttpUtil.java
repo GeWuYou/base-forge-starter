@@ -1,7 +1,7 @@
-package com.gewuyou.util;
+package com.gewuyou.baseforge.autoconfigure.util;
 
 
-import com.gewuyou.util.exception.UtilException;
+import com.gewuyou.baseforge.autoconfigure.util.exception.UtilException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 

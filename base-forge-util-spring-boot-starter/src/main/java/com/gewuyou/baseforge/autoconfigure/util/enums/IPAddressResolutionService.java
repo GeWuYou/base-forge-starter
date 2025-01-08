@@ -1,4 +1,4 @@
-package com.gewuyou.util.enums;
+package com.gewuyou.baseforge.autoconfigure.util.enums;
 
 import lombok.Getter;
 

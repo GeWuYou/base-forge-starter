@@ -1,7 +1,7 @@
-package com.gewuyou.util.config;
+package com.gewuyou.baseforge.autoconfigure.util.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gewuyou.util.BeanCopyUtil;
+import com.gewuyou.baseforge.autoconfigure.util.BeanCopyUtil;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
