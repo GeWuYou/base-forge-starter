@@ -1,1 +1,1 @@
-com.gewuyou.redis.config.RedisAutoConfiguration
+com.gewuyou.baseforge.redis.config.RedisAutoConfiguration

@@ -1,4 +1,4 @@
-package com.gewuyou.redis.service;
+package com.gewuyou.baseforge.redis.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.data.domain.Sort;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author gewuyou
  * @since 2024-10-03 14:36:22
  */
-public interface ICacheService {
+public interface CacheService {
     /**
      * 清理顶级命名空间下的所有缓存
      * @param topNamespace 顶级命名空间

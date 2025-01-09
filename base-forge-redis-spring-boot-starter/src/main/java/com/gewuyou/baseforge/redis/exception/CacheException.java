@@ -1,8 +1,10 @@
-package com.gewuyou.redis.exception;
+package com.gewuyou.baseforge.redis.exception;
 
 
-import com.gewuyou.core.exception.InternalException;
-import com.gewuyou.i18n.entity.InternalInformation;
+
+import com.gewuyou.baseforge.autoconfigure.i18n.entity.InternalInformation;
+import com.gewuyou.baseforge.core.exception.InternalException;
+
 
 /**
  * 缓存异常

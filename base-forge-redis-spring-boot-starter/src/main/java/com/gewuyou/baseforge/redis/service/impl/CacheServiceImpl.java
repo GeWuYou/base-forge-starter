@@ -1,11 +1,11 @@
-package com.gewuyou.redis.service.impl;
+package com.gewuyou.baseforge.redis.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gewuyou.redis.exception.CacheException;
-import com.gewuyou.redis.i18n.enums.CacheResponseInformation;
-import com.gewuyou.redis.service.ICacheService;
+import com.gewuyou.baseforge.redis.exception.CacheException;
+import com.gewuyou.baseforge.redis.i18n.enums.CacheResponseInformation;
+import com.gewuyou.baseforge.redis.service.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;
 import java.util.*;
@@ -29,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2024-10-03 14:44:44
  */
 @Service
-public class CacheServiceImpl implements ICacheService {
+public class CacheServiceImpl implements CacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
@@ -51,7 +52,7 @@ public class CacheServiceImpl implements ICacheService {
     public void clearTopNamespace(String topNamespace) {
         String pattern = topNamespace + ":*";
         Set<String> keys = redisTemplate.keys(pattern);
-        if (!keys.isEmpty()) {
+        if (!CollectionUtils.isEmpty(keys)) {
             redisTemplate.delete(keys);
         }
     }
@@ -65,7 +66,7 @@ public class CacheServiceImpl implements ICacheService {
     public void clearNamespace(String topNamespace, String namespace) {
         String pattern = topNamespace + ":" + namespace + ":*";
         Set<String> keys = redisTemplate.keys(pattern);
-        if (!keys.isEmpty()) {
+        if (!CollectionUtils.isEmpty(keys)) {
             redisTemplate.delete(keys);
         }
     }

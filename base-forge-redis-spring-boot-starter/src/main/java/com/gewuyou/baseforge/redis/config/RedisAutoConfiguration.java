@@ -1,4 +1,4 @@
-package com.gewuyou.redis.config;
+package com.gewuyou.baseforge.redis.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,8 +11,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.gewuyou.redis.service.ICacheService;
-import com.gewuyou.redis.service.impl.CacheServiceImpl;
+import com.gewuyou.baseforge.redis.service.CacheService;
+import com.gewuyou.baseforge.redis.service.impl.CacheServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -74,7 +74,7 @@ public class RedisAutoConfiguration {
     }
 
     @Bean
-    public ICacheService cacheService(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate) {
+    public CacheService cacheService(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate) {
         return new CacheServiceImpl(objectMapper, redisTemplate);
     }
 

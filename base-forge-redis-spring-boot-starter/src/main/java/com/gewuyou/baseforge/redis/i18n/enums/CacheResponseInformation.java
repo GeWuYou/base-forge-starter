@@ -1,6 +1,7 @@
-package com.gewuyou.redis.i18n.enums;
+package com.gewuyou.baseforge.redis.i18n.enums;
 
-import com.gewuyou.i18n.entity.InternalInformation;
+
+import com.gewuyou.baseforge.autoconfigure.i18n.entity.InternalInformation;
 
 /**
  * 缓存响应信息
