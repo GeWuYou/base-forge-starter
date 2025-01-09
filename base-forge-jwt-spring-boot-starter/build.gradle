@@ -1,0 +1,4 @@
+
+dependencies {
+    implementation project(":base-forge-core-spring-boot-starter")
+}

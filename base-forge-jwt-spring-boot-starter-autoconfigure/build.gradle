@@ -1,0 +1,19 @@
+
+dependencies {
+    implementation project(":base-forge-redis-spring-boot-starter")
+    implementation project(":base-forge-core-spring-boot-starter")
+    implementation project(":base-forge-jwt-spring-boot-starter")
+    implementation project(":base-forge-json-spring-boot-starter")
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
+    implementation 'org.springframework.security:spring-security-core'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation 'org.apache.commons:commons-lang3'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    implementation 'io.jsonwebtoken:jjwt-api'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+    implementation 'io.jsonwebtoken:jjwt-impl'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+    implementation 'io.jsonwebtoken:jjwt-jackson'
+}
