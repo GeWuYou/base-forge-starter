@@ -1,3 +1,4 @@
+
 // This file is used to configure the publishing of the project.
 publishing {
     repositories {
@@ -45,18 +46,23 @@ def configurePublishing(String name, String groupId, String artifactId, String v
 List.of(
         new PublishProject("async", "base-forge-async-spring-boot-starter", "1.0.0"),
         new PublishProject("core", "base-forge-core-spring-boot-starter", "1.0.0"),
+        new PublishProject("grpc", "base-forge-grpc-spring-boot-starter", "1.0.0"),
         new PublishProject("i18n", "base-forge-i18n-spring-boot-starter", "1.0.4"),
         new PublishProject("json", "base-forge-json-spring-boot-starter", "1.0.1"),
+        new PublishProject("jwt", "base-forge-jwt-spring-boot-starter", "1.0.0"),
+        new PublishProject("jwtAutoconfigure", "base-forge-jwt-spring-boot-starter-autoconfigure", "1.0.0"),
         new PublishProject("log", "base-forge-log-spring-boot-starter", "1.0.0"),
         new PublishProject("logAutoconfigure", "base-forge-log-spring-boot-starter-autoconfigure", "1.0.0"),
         new PublishProject("mybatisExtension", "base-forge-mybatis-extension-spring-boot-starter", "1.0.0"),
         new PublishProject("redis", "base-forge-redis-spring-boot-starter", "1.0.1"),
-        new PublishProject("security", "base-forge-security-spring-boot-starter", "1.0.0"),
-        new PublishProject("securityAutoconfigure", "base-forge-security-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("securityAuthentication", "base-forge-security-authentication-spring-boot-starter", "1.0.0"),
+        new PublishProject("securityAuthenticationAutoconfigure", "base-forge-security-authentication-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("securityAuthorization", "base-forge-security-authorization-spring-boot-starter", "1.0.0"),
+        new PublishProject("securityAuthorizationAutoconfigure", "base-forge-security-authorization-spring-boot-starter-autoconfigure", "1.0.0"),
         new PublishProject("util", "base-forge-util-spring-boot-starter", "1.0.1"),
         new PublishProject("web", "base-forge-web-spring-boot-starter", "1.0.0"),
         new PublishProject("webAutoconfigure", "base-forge-web-spring-boot-starter-autoconfigure", "1.0.0"),
-        new PublishProject("grpc", "base-forge-grpc-spring-boot-starter", "1.0.0")
+
 )
         .stream()
         .filter { (project.name == it.artifactId) }
