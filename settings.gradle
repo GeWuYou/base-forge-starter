@@ -12,8 +12,6 @@ include(
         'base-forge-log-spring-boot-starter-autoconfigure',
         'base-forge-jwt-spring-boot-starter',
         'base-forge-jwt-spring-boot-starter-autoconfigure',
-        'base-forge-security-spring-boot-starter',
-        'base-forge-security-spring-boot-starter-autoconfigure',
         'base-forge-security-authentication-spring-boot-starter',
         'base-forge-security-authentication-spring-boot-starter-autoconfigure',
         'base-forge-security-authorization-spring-boot-starter',

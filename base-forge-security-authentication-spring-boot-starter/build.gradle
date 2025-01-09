@@ -1,8 +1,7 @@
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
     implementation project(":base-forge-i18n-spring-boot-starter")
     implementation project(":base-forge-core-spring-boot-starter")
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
-    // 引入jackson-module-kotlin以支持kotlin
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation project(":base-forge-json-spring-boot-starter")
 }
