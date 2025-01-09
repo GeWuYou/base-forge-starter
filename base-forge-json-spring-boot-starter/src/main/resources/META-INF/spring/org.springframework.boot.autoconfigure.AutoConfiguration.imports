@@ -1,1 +1,1 @@
-com.gewuyou.json.config.JacksonAutoConfiguration
+com.gewuyou.baseforge.autoconfigure.json.config.JacksonAutoConfiguration
