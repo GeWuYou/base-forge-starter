@@ -1,6 +1,9 @@
-package com.gewuyou.async.config;
+package com.gewuyou.baseforge.autoconfigure.async.config;
 
-import com.gewuyou.async.config.entity.AsyncTaskExecutorProperties;
+import com.gewuyou.baseforge.autoconfigure.async.config.entity.AsyncTaskExecutorProperties;
+import com.gewuyou.baseforge.autoconfigure.async.service.AsyncService;
+import com.gewuyou.baseforge.autoconfigure.async.service.impl.AsyncServiceImpl;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.DisposableBean;
@@ -14,6 +17,7 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -42,9 +46,14 @@ public class AsyncTaskExecutorAutoConfiguration implements AsyncConfigurer , Dis
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(RejectedExecutionHandler.class)
     public RejectedExecutionHandler defaultRejectedExecutionHandler() {
-        return new ThreadPoolExecutor.AbortPolicy();
+        return new ThreadPoolExecutor.CallerRunsPolicy();
+    }
+
+    @PostConstruct
+    public void init() {
+        checkProperties();
     }
 
     /**
@@ -54,23 +63,22 @@ public class AsyncTaskExecutorAutoConfiguration implements AsyncConfigurer , Dis
     @Override
     @Bean(name = "asyncTaskExecutor")
     public Executor getAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        checkProperties();
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         // 设置核心线程数
-        executor.setCorePoolSize(properties.getCorePoolSize());
+        threadPoolTaskExecutor.setCorePoolSize(properties.getCorePoolSize());
         // 设置最大线程数
-        executor.setMaxPoolSize(properties.getMaxPoolSize());
+        threadPoolTaskExecutor.setMaxPoolSize(properties.getMaxPoolSize());
         // 设置队列容量
-        executor.setQueueCapacity(properties.getQueueCapacity());
+        threadPoolTaskExecutor.setQueueCapacity(properties.getQueueCapacity());
         // 设置线程活跃时间（秒）
-        executor.setKeepAliveSeconds(properties.getKeepAliveSeconds());
+        threadPoolTaskExecutor.setKeepAliveSeconds(properties.getKeepAliveSeconds());
         // 设置默认线程名称前缀
-        executor.setThreadNamePrefix(properties.getThreadNamePrefix());
-        // 设置拒绝策略    当前策略:AbortPolicy 超出执行队列会被舍弃并抛出异常
-        executor.setRejectedExecutionHandler(rejectedExecutionHandler);
-        executor.initialize();
-        this.executor = executor;
-        return executor;
+        threadPoolTaskExecutor.setThreadNamePrefix(properties.getThreadNamePrefix());
+        // 设置拒绝策略    当前策略:CallerRunsPolicy  由调用者线程来运行任务使得执行退化为同步
+        threadPoolTaskExecutor.setRejectedExecutionHandler(rejectedExecutionHandler);
+        threadPoolTaskExecutor.initialize();
+        this.executor = threadPoolTaskExecutor;
+        return threadPoolTaskExecutor;
     }
 
     /**
@@ -104,7 +112,17 @@ public class AsyncTaskExecutorAutoConfiguration implements AsyncConfigurer , Dis
      */
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return (ex, method, params) -> log.error("执行异步方法时发生异常方法名： [{}]，异常信息： [{}]", method.getName(), ex.getMessage(), ex);
+        return (ex, method, params) -> log.error("执行异步方法时发生异常，方法名： [{}]，参数：[{}]，异常信息： [{}]", method.getName(), Arrays.toString(params), ex.getMessage(), ex);
+    }
+
+    /**
+     * 创建默认的异步服务
+     * @return 异步服务
+     */
+    @Bean(name = "defaultAsyncService")
+    @ConditionalOnMissingBean(AsyncService.class)
+    public AsyncService createDefaultAsyncService() {
+        return new AsyncServiceImpl(executor);
     }
 
     /**
