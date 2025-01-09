@@ -1,6 +1,6 @@
-package com.gewuyou.i18n.exception;
+package com.gewuyou.baseforge.autoconfigure.i18n.exception;
 
-import com.gewuyou.i18n.entity.ResponseInformation;
+import com.gewuyou.baseforge.autoconfigure.i18n.entity.ResponseInformation;
 
 /**
  * i18n异常
@@ -9,7 +9,7 @@ import com.gewuyou.i18n.entity.ResponseInformation;
  * @since 2024-11-12 00:11:32
  */
 public class I18nBaseException extends RuntimeException {
-    protected final ResponseInformation responseInformation;
+    protected final transient ResponseInformation responseInformation;
 
     public I18nBaseException(ResponseInformation responseInformation) {
         super();

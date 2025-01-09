@@ -1,4 +1,4 @@
-package com.gewuyou.i18n.entity;
+package com.gewuyou.baseforge.autoconfigure.i18n.entity;
 
 /**
  * 内部信息(用于扩展项目内的i18n信息)
