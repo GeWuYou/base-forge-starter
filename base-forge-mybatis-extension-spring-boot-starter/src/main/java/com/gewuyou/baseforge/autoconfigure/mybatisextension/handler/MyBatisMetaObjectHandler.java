@@ -1,4 +1,4 @@
-package com.gewuyou.extension.handler;
+package com.gewuyou.baseforge.autoconfigure.mybatisextension.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;

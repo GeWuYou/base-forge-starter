@@ -1,3 +1,2 @@
-com.gewuyou.extension.config.MyBatisExtensionAutoConfiguration
-com.gewuyou.extension.config.MyBatisAutoConfiguration
-com.gewuyou.extension.config.MyBatisPlusAutoConfiguration
+com.gewuyou.baseforge.autoconfigure.mybatisextension.config.MyBatisAutoConfiguration
+com.gewuyou.baseforge.autoconfigure.mybatisextension.config.MyBatisPlusAutoConfiguration

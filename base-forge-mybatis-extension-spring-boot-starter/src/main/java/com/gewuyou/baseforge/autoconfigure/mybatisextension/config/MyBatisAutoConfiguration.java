@@ -1,8 +1,8 @@
-package com.gewuyou.extension.config;
+package com.gewuyou.baseforge.autoconfigure.mybatisextension.config;
 
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
-import com.gewuyou.extension.handler.MyBatisMetaObjectHandler;
-import com.gewuyou.extension.interceptor.SqlInterceptor;
+import com.gewuyou.baseforge.autoconfigure.mybatisextension.handler.MyBatisMetaObjectHandler;
+import com.gewuyou.baseforge.autoconfigure.mybatisextension.interceptor.SqlInterceptor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

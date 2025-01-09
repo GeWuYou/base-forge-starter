@@ -3,19 +3,3 @@ dependencies {
     implementation 'com.baomidou:mybatis-plus-spring-boot3-starter'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
 }
-publishing {
-    repositories {
-        maven {
-            name = 'localRepo'
-            url = "file://D:/Maven/mvn_repository"
-        }
-    }
-    publications {
-        create("mybatis-extension", MavenPublication){
-            groupId = 'com.gewuyou'
-            artifactId = 'base-forge-mybatis-extension-spring-boot-starter'
-            version = '1.0.1'
-            from components.java
-        }
-    }
-}

@@ -1,4 +1,4 @@
-package com.gewuyou.extension.interceptor;
+package com.gewuyou.baseforge.autoconfigure.mybatisextension.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.cache.CacheKey;
@@ -72,8 +72,12 @@ public class SqlInterceptor implements Interceptor {
         if (Objects.nonNull(mappedStatement) && invocation.getArgs().length > 1) {
             parameter = invocation.getArgs()[1];
         }
+        if (Objects.isNull(mappedStatement) || Objects.isNull(parameter)) {
+            return null;
+        }
         // 获取MyBatis配置信息
         Configuration configuration = mappedStatement.getConfiguration();
+
         // 获取SQL语句及其参数
         BoundSql boundSql = mappedStatement.getBoundSql(parameter);
         // 获取参数对象
@@ -108,23 +112,37 @@ public class SqlInterceptor implements Interceptor {
         }
         // 否则，逐个处理参数映射
         for (ParameterMapping parameterMapping : parameterMappings) {
-            // 获取参数的属性名
-            String propertyName = parameterMapping.getProperty();
-            MetaObject metaObject = configuration.newMetaObject(parameterObject);
-            // 检查对象中是否存在该属性的getter方法如果有则调用该方法获取属性值
-            if (metaObject.hasGetter(propertyName)) {
-                Object obj = metaObject.getValue(propertyName);
-                sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
-            }
-            // 检查BoundSql对象是否存在附加参数，附加参数可能是在动态Sql处理中生成的，如果有则获取该参数的值
-            else if (boundSql.hasAdditionalParameter(propertyName)) {
-                Object obj = boundSql.getAdditionalParameter(propertyName);
-                sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
-            }
-            // 如果都没有说明SQL匹配不上带上缺失方便查找问题
-            else {
-                sql = sql.replaceFirst("\\?", "缺失参数");
-            }
+            sql = handleParameterMapping(sql, boundSql, parameterObject, configuration, parameterMapping);
+        }
+        return sql;
+    }
+
+    /**
+     * 处理参数映射
+     * @param sql             SQL语句
+     * @param boundSql        绑定SQL对象
+     * @param parameterObject 参数对象
+     * @param configuration   MyBatis配置信息
+     * @param parameterMapping 参数映射
+     * @return 处理后的SQL语句
+     */
+    private String handleParameterMapping(String sql, BoundSql boundSql, Object parameterObject, Configuration configuration, ParameterMapping parameterMapping) {
+        // 获取参数的属性名
+        String propertyName = parameterMapping.getProperty();
+        MetaObject metaObject = configuration.newMetaObject(parameterObject);
+        // 检查对象中是否存在该属性的getter方法如果有则调用该方法获取属性值
+        if (metaObject.hasGetter(propertyName)) {
+            Object obj = metaObject.getValue(propertyName);
+            sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
+        }
+        // 检查BoundSql对象是否存在附加参数，附加参数可能是在动态Sql处理中生成的，如果有则获取该参数的值
+        else if (boundSql.hasAdditionalParameter(propertyName)) {
+            Object obj = boundSql.getAdditionalParameter(propertyName);
+            sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
+        }
+        // 如果都没有说明SQL匹配不上带上缺失方便查找问题
+        else {
+            sql = sql.replaceFirst("\\?", "缺失参数");
         }
         return sql;
     }

@@ -1,4 +1,4 @@
-package com.gewuyou.extension.config;
+package com.gewuyou.baseforge.autoconfigure.mybatisextension.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
