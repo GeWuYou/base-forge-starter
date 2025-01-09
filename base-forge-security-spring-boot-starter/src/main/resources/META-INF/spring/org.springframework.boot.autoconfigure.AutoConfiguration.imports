@@ -1,3 +1,0 @@
-com.gewuyou.security.config.CommonSecurityConfig
-com.gewuyou.security.config.WebSecurityConfig
-com.gewuyou.security.config.SecurityAutoConfiguration
