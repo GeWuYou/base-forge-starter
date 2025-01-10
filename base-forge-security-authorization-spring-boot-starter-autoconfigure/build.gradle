@@ -1,6 +1,6 @@
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    api 'org.springframework.boot:spring-boot-starter-security'
     implementation project(":base-forge-web-spring-boot-starter")
     implementation project(":base-forge-json-spring-boot-starter")
     api project(":base-forge-core-spring-boot-starter")
