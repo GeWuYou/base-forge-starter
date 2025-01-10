@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.gewuyou.baseforge.core.extension.getDeviceId
 import com.gewuyou.baseforge.core.extension.log
 import com.gewuyou.baseforge.entities.web.entity.Result
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.AuthenticationUserDetailsService
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtAuthenticationService
-import com.gewuyou.baseforge.security.authentication.autoconfigure.service.UserDetailsService
 import com.gewuyou.baseforge.security.authentication.entities.exception.AuthenticationException
 import com.gewuyou.baseforge.security.authentication.entities.i18n.enums.SecurityAuthenticationResponseInformation
 import jakarta.servlet.http.HttpServletRequest
@@ -27,7 +27,7 @@ import java.util.*
 class LoginSuccessJsonResponseHandler(
     private val objectMapper: ObjectMapper,
     private val jwtAuthenticationService: JwtAuthenticationService,
-    private val userDetailsService: UserDetailsService,
+    private val authenticationUserDetailsService: AuthenticationUserDetailsService,
     private val i18nMessageSource: MessageSource
 ) :
     AbstractAuthenticationTargetUrlRequestHandler(), AuthenticationSuccessHandler {
@@ -37,13 +37,11 @@ class LoginSuccessJsonResponseHandler(
         response: HttpServletResponse,
         authentication: Authentication
     ) {
-        val userDetails = authentication.details
         // 获取用户唯一标识
-        val principal = userDetailsService.getUserPrincipal(authentication.principal)
-            .orElseThrow {
-                log.error("调用UserDetailsService.getUserPrincipal方法失败!")
-                throw AuthenticationException(SecurityAuthenticationResponseInformation.INTERNAL_SERVER_ERROR)
-            }
+        val principal = authenticationUserDetailsService.getUserPrincipal(authentication.principal)?:run{
+            log.error("调用UserDetailsService.getUserPrincipal方法失败!")
+            throw AuthenticationException(SecurityAuthenticationResponseInformation.INTERNAL_SERVER_ERROR)
+        }
         // 尝试获取设备Id
         val deviceId = request.getDeviceId() ?: run {
             log.error("获取设备Id失败!")
@@ -59,7 +57,7 @@ class LoginSuccessJsonResponseHandler(
         val result = mapOf(
             "access_token" to accessToken,
             "refresh_token" to refreshToken,
-            "details" to userDetails
+            "details" to authentication.details
         )
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         val writer = response.writer

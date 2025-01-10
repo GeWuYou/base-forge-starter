@@ -9,8 +9,8 @@ import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.Login
 import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.LoginSuccessJsonResponseHandler;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.LogoutSuccessJsonResponseHandler;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.provider.NormalAuthenticationProvider;
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.AuthenticationUserDetailsService;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtAuthenticationService;
-import com.gewuyou.baseforge.security.authentication.autoconfigure.service.UserDetailsService;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -61,8 +61,8 @@ public class SecurityAuthenticationAutoConfiguration {
      * @throws InternalException 内部异常
      */
     @Bean
-    @ConditionalOnMissingBean(UserDetailsService.class)
-    public UserDetailsService createUserDetailsService() {
+    @ConditionalOnMissingBean(AuthenticationUserDetailsService.class)
+    public AuthenticationUserDetailsService createUserDetailsService() {
         throw new InternalException("请实现UserDetailsService接口用于提供用户信息服务!");
     }
 
@@ -77,10 +77,10 @@ public class SecurityAuthenticationAutoConfiguration {
     public AuthenticationSuccessHandler createLoginSuccessHandler(
             ObjectMapper objectMapper,
             JwtAuthenticationService jwtAuthenticationService,
-            UserDetailsService userDetailsService,
+            AuthenticationUserDetailsService authenticationUserDetailsService,
             MessageSource i18nMessageSource
     ) {
-        return new LoginSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, userDetailsService, i18nMessageSource);
+        return new LoginSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, authenticationUserDetailsService, i18nMessageSource);
     }
 
     /**
@@ -169,7 +169,7 @@ public class SecurityAuthenticationAutoConfiguration {
      * @param userCache          用户信息缓存
      * @param authoritiesMapper  权限映射器
      * @param passwordEncoder    密码加密器
-     * @param userDetailsService 用户信息服务
+     * @param authenticationUserDetailsService 用户信息服务
      * @return 普通登录认证提供器
      */
     @Bean
@@ -177,8 +177,8 @@ public class SecurityAuthenticationAutoConfiguration {
             UserCache userCache,
             GrantedAuthoritiesMapper authoritiesMapper,
             PasswordEncoder passwordEncoder,
-            UserDetailsService userDetailsService) {
-        return new NormalAuthenticationProvider(userCache, authoritiesMapper, passwordEncoder, userDetailsService);
+            AuthenticationUserDetailsService authenticationUserDetailsService) {
+        return new NormalAuthenticationProvider(userCache, authoritiesMapper, passwordEncoder, authenticationUserDetailsService);
     }
 
     /**

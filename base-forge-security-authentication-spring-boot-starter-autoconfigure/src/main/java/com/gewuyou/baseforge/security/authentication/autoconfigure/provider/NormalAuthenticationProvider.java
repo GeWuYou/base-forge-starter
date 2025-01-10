@@ -1,6 +1,6 @@
 package com.gewuyou.baseforge.security.authentication.autoconfigure.provider;
 
-import com.gewuyou.baseforge.security.authentication.autoconfigure.service.UserDetailsService;
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.AuthenticationUserDetailsService;
 import com.gewuyou.baseforge.security.authentication.entities.exception.AuthenticationException;
 import com.gewuyou.baseforge.security.authentication.entities.exception.SignInIdNotFoundException;
 import com.gewuyou.baseforge.security.authentication.entities.exception.UserDetailsNotFoundException;
@@ -8,6 +8,8 @@ import com.gewuyou.baseforge.security.authentication.entities.i18n.enums.Securit
 import com.gewuyou.baseforge.security.authentication.entities.token.NormalAuthenticationToken;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -17,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 普通身份验证提供程序<br/>
@@ -27,7 +30,6 @@ import java.util.Objects;
  */
 @Slf4j
 public class NormalAuthenticationProvider extends AbstractAuthenticationProvider {
-    private static final String USER_NOT_FOUND_PASSWORD = "userNotFoundPassword";
     /**
      * 权限映射器
      */
@@ -36,7 +38,7 @@ public class NormalAuthenticationProvider extends AbstractAuthenticationProvider
      * 密码加密器
      */
     private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
+    private final AuthenticationUserDetailsService authenticationUserDetailsService;
     private volatile String userNotFoundEncodedPassword;
 
     @Setter
@@ -44,11 +46,11 @@ public class NormalAuthenticationProvider extends AbstractAuthenticationProvider
     @Setter
     private CompromisedPasswordChecker compromisedPasswordChecker;
 
-    public NormalAuthenticationProvider(UserCache userCache, GrantedAuthoritiesMapper authoritiesMapper, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+    public NormalAuthenticationProvider(UserCache userCache, GrantedAuthoritiesMapper authoritiesMapper, PasswordEncoder passwordEncoder, AuthenticationUserDetailsService authenticationUserDetailsService) {
         super(userCache);
         this.authoritiesMapper = authoritiesMapper;
         this.passwordEncoder = passwordEncoder;
-        this.userDetailsService = userDetailsService;
+        this.authenticationUserDetailsService = authenticationUserDetailsService;
     }
 
     /**
@@ -85,9 +87,9 @@ public class NormalAuthenticationProvider extends AbstractAuthenticationProvider
         this.prepareTimingAttackProtection();
         try {
             // 加载用户信息
-            return userDetailsService
-                    .loadUserBySignInId(authentication.getPrincipal())
-                    .orElseThrow(()-> new UserDetailsNotFoundException(SecurityAuthenticationResponseInformation.USER_NOT_FOUND));
+            return Optional.ofNullable(authenticationUserDetailsService
+                            .loadUserBySignInId(authentication.getPrincipal()))
+                    .orElseThrow(() -> new UserDetailsNotFoundException(SecurityAuthenticationResponseInformation.USER_NOT_FOUND));
         } catch (SignInIdNotFoundException e) {
             // 启用时序攻击保护
             this.mitigateAgainstTimingAttack(authentication);
@@ -103,7 +105,7 @@ public class NormalAuthenticationProvider extends AbstractAuthenticationProvider
      */
     private void prepareTimingAttackProtection() {
         if (Objects.isNull(this.userNotFoundEncodedPassword)) {
-            this.userNotFoundEncodedPassword = this.passwordEncoder.encode(USER_NOT_FOUND_PASSWORD);
+            this.userNotFoundEncodedPassword = this.passwordEncoder.encode(RandomStringUtils.insecure().next(RandomUtils.insecure().randomInt(20, 32)));
         }
     }
 
@@ -148,9 +150,10 @@ public class NormalAuthenticationProvider extends AbstractAuthenticationProvider
 
     /**
      * 获取普通登录认证令牌
-     * @param principal 用户唯一标识
+     *
+     * @param principal      用户唯一标识
      * @param authentication 认证
-     * @param user 用户详情
+     * @param user           用户详情
      * @return 普通登录认证令牌
      */
     private NormalAuthenticationToken getNormalLoginAuthenticationToken(Object principal, Authentication authentication, UserDetails user) {
