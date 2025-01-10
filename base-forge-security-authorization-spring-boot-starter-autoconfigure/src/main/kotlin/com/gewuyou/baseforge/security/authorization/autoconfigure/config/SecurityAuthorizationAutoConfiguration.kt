@@ -8,8 +8,8 @@ import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.JwtAuth
 import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.AuthorizationExceptionHandler
 import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.AuthorizationHandler
 import com.gewuyou.baseforge.security.authorization.autoconfigure.manager.DynamicAuthorizationManager
+import com.gewuyou.baseforge.security.authorization.autoconfigure.service.AuthorizationUserDetailsService
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
-import com.gewuyou.baseforge.security.authorization.autoconfigure.service.UserDetailsService
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -58,8 +58,8 @@ class SecurityAuthorizationAutoConfiguration {
     * 用户详情服务
     */
     @Bean
-    @ConditionalOnMissingBean(UserDetailsService::class)
-    fun createUserDetailsService():UserDetailsService {
+    @ConditionalOnMissingBean(AuthorizationUserDetailsService::class)
+    fun createUserDetailsService():AuthorizationUserDetailsService {
         throw InternalException("请实现UserDetailsService接口")
     }
     /**
@@ -75,7 +75,7 @@ class SecurityAuthorizationAutoConfiguration {
     */
     @Bean
     @ConditionalOnMissingBean(AuthorizationFilter::class)
-    fun createAuthorizationFilter(jwtAuthorizationService: JwtAuthorizationService,userDetailsService: UserDetailsService):AuthorizationFilter {
-        return JwtAuthorizationFilter(jwtAuthorizationService,userDetailsService)
+    fun createAuthorizationFilter(jwtAuthorizationService: JwtAuthorizationService, authorizationUserDetailsService: AuthorizationUserDetailsService):AuthorizationFilter {
+        return JwtAuthorizationFilter(jwtAuthorizationService,authorizationUserDetailsService)
     }
 }

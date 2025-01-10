@@ -3,8 +3,8 @@ package com.gewuyou.baseforge.security.authorization.autoconfigure.filter
 import com.gewuyou.baseforge.core.extension.getAccessToken
 import com.gewuyou.baseforge.core.extension.log
 import com.gewuyou.baseforge.security.authentication.entities.token.NormalAuthenticationToken
+import com.gewuyou.baseforge.security.authorization.autoconfigure.service.AuthorizationUserDetailsService
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
-import com.gewuyou.baseforge.security.authorization.autoconfigure.service.UserDetailsService
 import com.gewuyou.baseforge.security.authorization.entities.exception.AuthorizationException
 import com.gewuyou.baseforge.security.authorization.entities.i18n.enums.SecurityAuthorizationResponseInformation
 import jakarta.servlet.FilterChain
@@ -21,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter
  */
 class JwtAuthorizationFilter(
     private val jwtAuthorizationService: JwtAuthorizationService,
-    private val userDetailsService: UserDetailsService
+    private val authorizationUserDetailsService: AuthorizationUserDetailsService
 ) : OncePerRequestFilter(), AuthorizationFilter {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -38,7 +38,7 @@ class JwtAuthorizationFilter(
             ?.let {
                 // 解析返回的用户信息对象
                 // 加载用户信息
-                val userDetails = userDetailsService.loadUserByPrincipal(it.principal)
+                val userDetails = authorizationUserDetailsService.loadUserByPrincipal(it.principal)
                 log.info("token 验证通过，用户信息：{}", userDetails)
                 // 从token中获取用户信息，放入request中
                 request.setAttribute("userDetails", userDetails)
