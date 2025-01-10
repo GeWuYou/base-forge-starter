@@ -5,6 +5,7 @@ import com.gewuyou.baseforge.entities.web.entity.Result
 import com.gewuyou.baseforge.security.authentication.entities.i18n.enums.SecurityAuthenticationResponseInformation
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.AuthenticationException
@@ -17,7 +18,8 @@ import org.springframework.security.web.AuthenticationEntryPoint
  * @author gewuyou
  */
 class AuthenticationExceptionHandler(
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val i18nMessageSource: MessageSource
 ) : AuthenticationEntryPoint {
     override fun commence(
         request: HttpServletRequest,
@@ -27,7 +29,7 @@ class AuthenticationExceptionHandler(
         response.status = HttpStatus.UNAUTHORIZED.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         val writer = response.writer
-        writer.print(objectMapper.writeValueAsString(Result.failure<String>(SecurityAuthenticationResponseInformation.LoginFailed)))
+        writer.print(objectMapper.writeValueAsString(Result.failure<String>(SecurityAuthenticationResponseInformation.LoginFailed,i18nMessageSource)))
         writer.flush()
         writer.close()
     }

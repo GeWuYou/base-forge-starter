@@ -10,6 +10,7 @@ import com.gewuyou.baseforge.security.authentication.entities.exception.Authenti
 import com.gewuyou.baseforge.security.authentication.entities.i18n.enums.SecurityAuthenticationResponseInformation
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.MessageSource
 import org.springframework.http.MediaType
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler
@@ -26,7 +27,8 @@ import java.util.*
 class LoginSuccessJsonResponseHandler(
     private val objectMapper: ObjectMapper,
     private val jwtAuthenticationService: JwtAuthenticationService,
-    private val userDetailsService: UserDetailsService
+    private val userDetailsService: UserDetailsService,
+    private val i18nMessageSource: MessageSource
 ) :
     AbstractAuthenticationTargetUrlRequestHandler(), AuthenticationSuccessHandler {
     @Throws(IOException::class)
@@ -50,7 +52,7 @@ class LoginSuccessJsonResponseHandler(
         // 生成access token
         val accessToken =
             jwtAuthenticationService
-                .generateToken(principal,deviceId,null)
+                .generateToken(principal, deviceId, null)
         // 生成刷新token
         val refreshToken = jwtAuthenticationService.generateRefreshToken(principal, deviceId)
         // 生成返回结果
@@ -65,7 +67,8 @@ class LoginSuccessJsonResponseHandler(
             objectMapper.writeValueAsString(
                 Result.success(
                     SecurityAuthenticationResponseInformation.LOGIN_SUCCESS,
-                    result
+                    result,
+                    i18nMessageSource
                 )
             )
         )

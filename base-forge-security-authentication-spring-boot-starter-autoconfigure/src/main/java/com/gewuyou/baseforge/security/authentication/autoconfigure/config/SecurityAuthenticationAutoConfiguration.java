@@ -14,6 +14,7 @@ import com.gewuyou.baseforge.security.authentication.autoconfigure.service.UserD
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -76,9 +77,10 @@ public class SecurityAuthenticationAutoConfiguration {
     public AuthenticationSuccessHandler createLoginSuccessHandler(
             ObjectMapper objectMapper,
             JwtAuthenticationService jwtAuthenticationService,
-            UserDetailsService userDetailsService
+            UserDetailsService userDetailsService,
+            MessageSource i18nMessageSource
     ) {
-        return new LoginSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, userDetailsService);
+        return new LoginSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, userDetailsService, i18nMessageSource);
     }
 
     /**
@@ -89,8 +91,11 @@ public class SecurityAuthenticationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
-    public AuthenticationFailureHandler createLoginFailHandler(ObjectMapper objectMapper) {
-        return new LoginFailJsonResponseHandler(objectMapper);
+    public AuthenticationFailureHandler createLoginFailHandler(
+            ObjectMapper objectMapper,
+            MessageSource i18nMessageSource
+    ) {
+        return new LoginFailJsonResponseHandler(objectMapper,i18nMessageSource);
     }
 
     /**
@@ -184,20 +189,26 @@ public class SecurityAuthenticationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
-    public AuthenticationEntryPoint createAuthenticationEntryPoint(ObjectMapper objectMapper) {
-        return new AuthenticationExceptionHandler(objectMapper);
+    public AuthenticationEntryPoint createAuthenticationEntryPoint(
+            ObjectMapper objectMapper,
+            MessageSource i18nMessageSource
+    ) {
+        return new AuthenticationExceptionHandler(objectMapper, i18nMessageSource);
     }
 
     /**
      * 登出成功处理器
      *
-     * @param objectMapper json对象映射器
-     * @param jwtAuthenticationService   jwt服务
+     * @param objectMapper             json对象映射器
+     * @param jwtAuthenticationService jwt服务
      * @return 登出成功处理器
      */
     @Bean
     @ConditionalOnMissingBean(LogoutSuccessHandler.class)
-    public LogoutSuccessHandler createLogoutSuccessHandler(ObjectMapper objectMapper, JwtAuthenticationService jwtAuthenticationService) {
-        return new LogoutSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService);
+    public LogoutSuccessHandler createLogoutSuccessHandler(ObjectMapper objectMapper,
+                                                           JwtAuthenticationService jwtAuthenticationService,
+                                                           MessageSource i18nMessageSource
+    ) {
+        return new LogoutSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, i18nMessageSource);
     }
 }

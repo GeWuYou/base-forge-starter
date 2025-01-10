@@ -9,6 +9,7 @@ import com.gewuyou.baseforge.security.authentication.entities.entity.request.Log
 import com.gewuyou.baseforge.security.authentication.entities.i18n.enums.SecurityAuthenticationResponseInformation
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.MessageSource
 import org.springframework.http.MediaType
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
@@ -21,7 +22,8 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
  */
 class LogoutSuccessJsonResponseHandler(
     private val objectMapper: ObjectMapper,
-    private val jwtAuthenticationService: JwtAuthenticationService
+    private val jwtAuthenticationService: JwtAuthenticationService,
+    private val i18nMessageSource: MessageSource
 ) :LogoutSuccessHandler{
     override fun onLogoutSuccess(
         request: HttpServletRequest,
@@ -44,7 +46,7 @@ class LogoutSuccessJsonResponseHandler(
         val writer = response.writer
         writer.print(
             objectMapper.writeValueAsString(
-                Result.success<Any>(SecurityAuthenticationResponseInformation.LOGIN_SUCCESS)
+                Result.success<Any>(SecurityAuthenticationResponseInformation.LOGIN_SUCCESS,i18nMessageSource)
             )
         )
         writer.flush()

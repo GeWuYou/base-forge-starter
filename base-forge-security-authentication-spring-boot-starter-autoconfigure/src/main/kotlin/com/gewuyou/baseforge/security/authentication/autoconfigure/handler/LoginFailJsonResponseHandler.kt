@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.gewuyou.baseforge.entities.web.entity.Result
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.AuthenticationException
@@ -16,7 +17,10 @@ import java.io.IOException
  * @author gewuyou
  * @since 2024-11-24 20:09:43
  */
-class LoginFailJsonResponseHandler(private val objectMapper: ObjectMapper) : AuthenticationFailureHandler {
+class LoginFailJsonResponseHandler(
+    private val objectMapper: ObjectMapper,
+    private val i18nMessageSource: MessageSource
+) : AuthenticationFailureHandler {
     @Throws(IOException::class)
     override fun onAuthenticationFailure(
         request: HttpServletRequest,
@@ -30,7 +34,8 @@ class LoginFailJsonResponseHandler(private val objectMapper: ObjectMapper) : Aut
             objectMapper.writeValueAsString(
                 Result.failure<Any>(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    message
+                    message,
+                    i18nMessageSource
                 )
             )
         )
