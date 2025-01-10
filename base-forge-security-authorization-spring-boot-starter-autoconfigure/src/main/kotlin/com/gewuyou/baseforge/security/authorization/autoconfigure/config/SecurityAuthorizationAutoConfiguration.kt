@@ -13,6 +13,7 @@ import com.gewuyou.baseforge.security.authorization.autoconfigure.service.UserDe
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authorization.AuthorizationManager
@@ -34,8 +35,8 @@ class SecurityAuthorizationAutoConfiguration {
     */
     @Bean
     @ConditionalOnMissingBean(AccessDeniedHandler::class)
-    fun createAccessDeniedHandler(objectMapper: ObjectMapper):AccessDeniedHandler {
-        return AuthorizationExceptionHandler(objectMapper)
+    fun createAccessDeniedHandler(objectMapper: ObjectMapper,i18nMessageSource: MessageSource):AccessDeniedHandler {
+        return AuthorizationExceptionHandler(objectMapper,i18nMessageSource)
     }
     /**
     * 动态授权处理器
