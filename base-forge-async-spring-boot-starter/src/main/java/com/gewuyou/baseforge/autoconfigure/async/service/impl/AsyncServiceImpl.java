@@ -76,7 +76,7 @@ public record AsyncServiceImpl(Executor executor) implements AsyncService {
      * @return CompletableFuture
      */
     @Override
-    public CompletableFuture<Void> runAsyncWithExceptionHandler(Runnable runnable, Function<Throwable, ? extends Void> errorHandler) {
+    public CompletableFuture<Void> runAsyncWithExceptionHandler(Runnable runnable, Function<Throwable, Void> errorHandler) {
         return runAsync(runnable).exceptionally(errorHandler);
     }
 
