@@ -1,18 +1,17 @@
 package com.gewuyou.baseforge.autoconfigure.web.aspect;
 
 
-import com.gewuyou.baseforge.autoconfigure.redis.service.CacheService;
 import com.gewuyou.baseforge.autoconfigure.util.IpUtil;
 import com.gewuyou.baseforge.entities.web.annotation.Idempotent;
 import com.gewuyou.baseforge.entities.web.exception.AccessException;
 import com.gewuyou.baseforge.entities.web.i18n.enums.WebResponseInformation;
+import com.gewuyou.baseforge.redis.service.CacheService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -28,7 +27,6 @@ import java.util.concurrent.TimeUnit;
  * @since 2024-07-20 上午12:00:39
  */
 @Aspect
-@Component
 @Slf4j
 public class IdempotentAspect {
     private final CacheService cacheService;

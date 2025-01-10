@@ -1,7 +1,6 @@
 package com.gewuyou.baseforge.autoconfigure.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gewuyou.baseforge.autoconfigure.redis.service.CacheService;
 import com.gewuyou.baseforge.autoconfigure.web.aspect.IdempotentAspect;
 import com.gewuyou.baseforge.autoconfigure.web.aspect.ReadWriteLockAspect;
 import com.gewuyou.baseforge.autoconfigure.web.config.entity.PageProperties;
@@ -9,10 +8,12 @@ import com.gewuyou.baseforge.autoconfigure.web.config.entity.WebStarterPropertie
 import com.gewuyou.baseforge.autoconfigure.web.handler.GlobalExceptionHandler;
 import com.gewuyou.baseforge.autoconfigure.web.interceptor.AccessLimitInterceptor;
 import com.gewuyou.baseforge.autoconfigure.web.interceptor.PaginationInterceptor;
+import com.gewuyou.baseforge.redis.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -40,7 +41,7 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
             AccessLimitInterceptor accessLimitInterceptor,
             @Lazy
             PaginationInterceptor paginationInterceptor
-            ) {
+    ) {
         this.accessLimitInterceptor = accessLimitInterceptor;
         this.paginationInterceptor = paginationInterceptor;
     }
@@ -65,6 +66,7 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
 
     /**
      * 创建 AccessLimitInterceptor
+     *
      * @param cacheService 缓存服务
      * @param objectMapper 对象映射器
      * @return AccessLimitInterceptor
@@ -72,12 +74,15 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
     @Bean
     public AccessLimitInterceptor createAccessLimitInterceptor(
             CacheService cacheService,
-            ObjectMapper objectMapper) {
-        return new AccessLimitInterceptor(cacheService,objectMapper);
+            ObjectMapper objectMapper,
+            MessageSource i18nMessageSource
+    ) {
+        return new AccessLimitInterceptor(cacheService, objectMapper, i18nMessageSource);
     }
 
     /**
      * 创建 IdempotentAspect
+     *
      * @param cacheService 缓存服务
      * @return IdempotentAspect
      */
@@ -88,6 +93,7 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
 
     /**
      * 创建 ReadWriteLockAspect
+     *
      * @param redissonClient Redisson 客户端
      * @return ReadWriteLockAspect
      */
@@ -98,6 +104,7 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
 
     /**
      * 创建 PaginationInterceptor
+     *
      * @param pageProperties 分页配置
      * @return PaginationInterceptor
      */
@@ -105,12 +112,14 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
     public PaginationInterceptor createPaginationInterceptor(PageProperties pageProperties) {
         return new PaginationInterceptor(pageProperties);
     }
+
     /**
      * 创建 GlobalExceptionHandler
+     *
      * @return GlobalExceptionHandler
      */
     @Bean
-    public GlobalExceptionHandler globalExceptionHandler() {
-        return new GlobalExceptionHandler();
+    public GlobalExceptionHandler globalExceptionHandler(MessageSource i18nMessageSource) {
+        return new GlobalExceptionHandler(i18nMessageSource);
     }
 }
