@@ -22,7 +22,8 @@ class DefaultJwtService(
     /**
      * 生成访问token
      *
-     * @param userDetails 用户信息Json字符串
+     * @param principal 用户唯一标识
+     * @param deviceId  设备唯一标识 用于判断登录请求是否重复
      * @param otherClaims 其他声明
      * @return java.lang.String token
      * @apiNote
@@ -35,7 +36,8 @@ class DefaultJwtService(
     /**
      * 根据刷新token生成访问token
      * @param refreshToken 刷新token
-     * @param userDetails 用户信息对象
+     * @param principal 用户唯一标识
+     * @param deviceId  设备唯一标识
      * @param otherClaims 其他声明
      * @return java.lang.String 访问token 如果刷新token无效则返回null
      */
