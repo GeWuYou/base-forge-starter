@@ -30,6 +30,7 @@ public class I18nAutoConfiguration {
     @Bean(name = MESSAGE_SOURCE_BEAN_NAME)
     @ConditionalOnMissingBean(name = MESSAGE_SOURCE_BEAN_NAME)
     public MessageSource messageSource() {
+        log.info("开始加载 I18n 配置...");
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         // 动态扫描所有 i18n 子目录下的 messages.properties 文件
         String basePath = "classpath*:i18n/**/messages";
@@ -38,6 +39,7 @@ public class I18nAutoConfiguration {
         // 设置文件路径到 messageSource
         messageSource.setBasenames(baseNames.toArray(new String[0]));
         messageSource.setDefaultEncoding("UTF-8");
+        log.info("I18n 配置加载完成...");
         return messageSource;
     }
 
