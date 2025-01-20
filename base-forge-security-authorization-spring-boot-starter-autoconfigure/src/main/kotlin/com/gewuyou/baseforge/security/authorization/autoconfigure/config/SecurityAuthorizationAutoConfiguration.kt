@@ -10,7 +10,6 @@ import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.Author
 import com.gewuyou.baseforge.security.authorization.autoconfigure.manager.DynamicAuthorizationManager
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.AuthorizationUserDetailsService
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
@@ -26,7 +25,6 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
  * @since 2025-01-08 11:03:43
  * @author gewuyou
  */
-@EnableAutoConfiguration
 @Configuration
 @EnableConfigurationProperties(SecurityAuthorizationProperties::class)
 class SecurityAuthorizationAutoConfiguration {
@@ -60,7 +58,7 @@ class SecurityAuthorizationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(AuthorizationUserDetailsService::class)
     fun createUserDetailsService():AuthorizationUserDetailsService {
-        throw InternalException("请实现UserDetailsService接口")
+        throw InternalException("请实现AuthorizationUserDetailsService接口")
     }
     /**
     * JWT授权服务

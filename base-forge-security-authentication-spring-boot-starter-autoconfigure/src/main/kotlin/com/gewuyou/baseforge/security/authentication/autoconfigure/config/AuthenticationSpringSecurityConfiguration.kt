@@ -1,7 +1,8 @@
 package com.gewuyou.baseforge.security.authentication.autoconfigure.config
 
-import com.gewuyou.baseforge.core.extension.cleanUnNeedConfig
+
 import com.gewuyou.baseforge.security.authentication.autoconfigure.config.entity.SecurityAuthenticationProperties
+import com.gewuyou.baseforge.security.authentication.entities.extension.cleanUnNeedConfig
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

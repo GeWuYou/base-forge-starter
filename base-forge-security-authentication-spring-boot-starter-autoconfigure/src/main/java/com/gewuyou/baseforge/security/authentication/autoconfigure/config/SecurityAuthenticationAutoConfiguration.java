@@ -11,7 +11,6 @@ import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.Logou
 import com.gewuyou.baseforge.security.authentication.autoconfigure.provider.NormalAuthenticationProvider;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.AuthenticationUserDetailsService;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtAuthenticationService;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
@@ -39,7 +38,6 @@ import java.util.List;
  * @author gewuyou
  * @since 2025-01-03 10:17:19
  */
-@EnableAutoConfiguration
 @Configuration
 @EnableConfigurationProperties(SecurityAuthenticationProperties.class)
 public class SecurityAuthenticationAutoConfiguration {

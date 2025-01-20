@@ -1,9 +1,8 @@
 package com.gewuyou.baseforge.security.authorization.autoconfigure.config
 
-import com.gewuyou.baseforge.core.extension.cleanUnNeedConfig
+import com.gewuyou.baseforge.security.authentication.entities.extension.cleanUnNeedConfig
 import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.SecurityAuthorizationProperties
 import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.AuthorizationFilter
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authorization.AuthorizationManager
@@ -20,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * @author gewuyou
  */
 @Configuration
-@EnableAutoConfiguration
 class AuthorizationSpringSecurityConfiguration(
     private val dynamicAuthorizationManager: AuthorizationManager<RequestAuthorizationContext>,
     private val jwtAuthorizationFilter: AuthorizationFilter,

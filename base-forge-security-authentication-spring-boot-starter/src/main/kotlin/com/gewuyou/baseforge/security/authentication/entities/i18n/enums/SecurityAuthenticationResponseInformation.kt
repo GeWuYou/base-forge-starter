@@ -46,6 +46,11 @@ enum class SecurityAuthenticationResponseInformation(
     PASSWORD_NOT_PROVIDED(HttpStatus.BAD_REQUEST.value(), "security.response.password.not.provided"),
 
     /**
+     * 用户标识未提供
+     */
+    PRINCIPAL_NOT_PROVIDED(HttpStatus.BAD_REQUEST.value(), "security.response.principal.not.provided"),
+
+    /**
      * 用户名或密码错误
      */
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST.value(), "security.response.password.not.match"),

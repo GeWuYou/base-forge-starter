@@ -38,13 +38,15 @@ class JwtAuthorizationFilter(
             ?.let {
                 // 解析返回的用户信息对象
                 // 加载用户信息
-                val userDetails = authorizationUserDetailsService.loadUserByPrincipal(it.principal)
+                val userDetails = authorizationUserDetailsService.loadUserByPrincipal(it.principal)?:run{
+                    throw AuthorizationException(SecurityAuthorizationResponseInformation.USER_DETAILS_NOT_FOUND)
+                }
                 log.info("token 验证通过，用户信息：{}", userDetails)
                 // 从token中获取用户信息，放入request中
                 request.setAttribute("userDetails", userDetails)
                 // 生成token并将用户信息放入security context中
                 SecurityContextHolder.getContext().authentication =
-                    NormalAuthenticationToken.authenticated(userDetails, userDetails.authorities)
+                    NormalAuthenticationToken.authenticated(userDetails,userDetails.authorities)
                 log.info("token 验证通过，放行")
                 filterChain.doFilter(request, response)
             } ?: run {

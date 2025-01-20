@@ -32,6 +32,11 @@ enum class SecurityAuthorizationResponseInformation(
      * 无权限访问
      */
     PROHIBITION_OF_ACCESS(HttpStatus.FORBIDDEN.value(), "security.response.forbidden"),
+
+    /**
+     * 用户信息不存在
+     */
+    USER_DETAILS_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR.value(), "security.response.user.details.not.found"),
     ;
     /**
      * 获取响应码

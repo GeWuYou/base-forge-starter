@@ -1,8 +1,6 @@
 package com.gewuyou.baseforge.security.authentication.autoconfigure.service
 
-import com.gewuyou.baseforge.security.authentication.entities.exception.SignInIdNotFoundException
 import org.springframework.security.core.userdetails.UserDetails
-import java.util.*
 
 
 /**
@@ -16,10 +14,8 @@ interface AuthenticationUserDetailsService {
      * 根据用户唯一标识查询用户详细信息
      * @param principal 用户唯一标识 通常为用户名 手机号 邮箱等
      * @return UserDetails 用户详细信息
-     * @throws SignInIdNotFoundException signInId不存在异常
      */
-    @Throws(SignInIdNotFoundException::class)
-    fun loadUserBySignInId(principal: Any): UserDetails?
+    fun loadUserByPrincipal(principal: Any): UserDetails?
 
     /**
      * 根据用户唯一标识查询用户唯一标识

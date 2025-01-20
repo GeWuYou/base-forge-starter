@@ -1,4 +1,4 @@
-package com.gewuyou.baseforge.core.extension
+package com.gewuyou.baseforge.security.authentication.entities.extension
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 

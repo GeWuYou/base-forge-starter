@@ -2,7 +2,7 @@ package com.gewuyou.baseforge.security.authentication.autoconfigure.provider;
 
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.AuthenticationUserDetailsService;
 import com.gewuyou.baseforge.security.authentication.entities.exception.AuthenticationException;
-import com.gewuyou.baseforge.security.authentication.entities.exception.SignInIdNotFoundException;
+import com.gewuyou.baseforge.security.authentication.entities.exception.PrincipalNotFoundException;
 import com.gewuyou.baseforge.security.authentication.entities.exception.UserDetailsNotFoundException;
 import com.gewuyou.baseforge.security.authentication.entities.i18n.enums.SecurityAuthenticationResponseInformation;
 import com.gewuyou.baseforge.security.authentication.entities.token.NormalAuthenticationToken;
@@ -86,11 +86,14 @@ public class NormalAuthenticationProvider extends AbstractAuthenticationProvider
         // 准备时序攻击保护
         this.prepareTimingAttackProtection();
         try {
+            if(Objects.isNull(authentication.getPrincipal())){
+                throw new PrincipalNotFoundException(SecurityAuthenticationResponseInformation.PRINCIPAL_NOT_PROVIDED);
+            }
             // 加载用户信息
             return Optional.ofNullable(authenticationUserDetailsService
-                            .loadUserBySignInId(authentication.getPrincipal()))
+                            .loadUserByPrincipal(authentication.getPrincipal()))
                     .orElseThrow(() -> new UserDetailsNotFoundException(SecurityAuthenticationResponseInformation.USER_NOT_FOUND));
-        } catch (SignInIdNotFoundException e) {
+        } catch (PrincipalNotFoundException e) {
             // 启用时序攻击保护
             this.mitigateAgainstTimingAttack(authentication);
             throw e;

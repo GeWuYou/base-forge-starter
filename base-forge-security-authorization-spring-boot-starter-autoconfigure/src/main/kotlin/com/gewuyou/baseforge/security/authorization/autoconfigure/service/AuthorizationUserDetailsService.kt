@@ -10,9 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails
  */
 fun interface AuthorizationUserDetailsService {
     /**
-     * 根据用户名加载用户详细信息
-     * @param principal 用户名
-     * @return 用户详细信息
+     * 根据用户唯一标识查询用户详细信息
+     * @param principal 用户唯一标识 通常为用户名 手机号 邮箱等
+     * @return UserDetails 用户详细信息
      */
-    fun loadUserByPrincipal(principal: String): UserDetails
+    fun loadUserByPrincipal(principal: Any): UserDetails?
 }

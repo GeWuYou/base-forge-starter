@@ -26,7 +26,7 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
      */
     protected boolean forcePrincipalAsString = false;
 
-    public AbstractAuthenticationProvider(UserCache userCache) {
+    protected AbstractAuthenticationProvider(UserCache userCache) {
         this.userCache = userCache;
     }
 
@@ -39,10 +39,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
     protected void preAuthenticationCheck(UserDetails userDetails){
         if (!userDetails.isAccountNonLocked()) {
             log.warn("用户[{}]已被锁定", userDetails.getUsername());
-            throw new AuthenticationException(SecurityAuthenticationResponseInformation.ACCOUNT_IS_LOCKED);
-        }
-        if (!userDetails.isAccountNonLocked()) {
-            log.debug("用户[{}]账户已锁定", userDetails.getUsername());
             throw new AuthenticationException(SecurityAuthenticationResponseInformation.ACCOUNT_IS_LOCKED);
         }
         if (!userDetails.isEnabled()) {
@@ -92,14 +88,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
      * @return 成功的认证
      */
     protected abstract Authentication createSuccessAuthentication(Object principal, Authentication authentication, UserDetails user);
-
-    /**
-     * 是否支持指定的认证类型
-     * @param authentication 认证类型
-     * @return 是否支持
-     */
-    @Override
-    public abstract boolean supports(Class<?> authentication);
 
     /**
      * 默认将用户的主要标识作为用户名
