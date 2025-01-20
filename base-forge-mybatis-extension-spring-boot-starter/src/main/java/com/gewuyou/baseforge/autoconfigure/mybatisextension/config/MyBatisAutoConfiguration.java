@@ -3,7 +3,6 @@ package com.gewuyou.baseforge.autoconfigure.mybatisextension.config;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.gewuyou.baseforge.autoconfigure.mybatisextension.handler.MyBatisMetaObjectHandler;
 import com.gewuyou.baseforge.autoconfigure.mybatisextension.interceptor.SqlInterceptor;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
  * @author gewuyou
  * @since 2024-11-13 12:22:48
  */
-@EnableAutoConfiguration
 @Configuration
 public class MyBatisAutoConfiguration {
 

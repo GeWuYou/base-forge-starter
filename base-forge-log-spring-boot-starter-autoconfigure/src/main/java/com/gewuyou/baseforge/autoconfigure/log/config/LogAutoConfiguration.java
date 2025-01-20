@@ -13,7 +13,6 @@ import com.gewuyou.baseforge.autoconfigure.log.service.IExceptionLoggingDataServ
 import com.gewuyou.baseforge.autoconfigure.log.service.IOperationLoggingDataService;
 import com.gewuyou.baseforge.autoconfigure.log.service.impl.DefaultExceptionLoggingDataServiceImpl;
 import com.gewuyou.baseforge.autoconfigure.log.service.impl.DefaultOperationLoggingDataServiceImpl;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
  * @since 2024-11-13 17:55:36
  */
 @Configuration
-@EnableAutoConfiguration
 public class LogAutoConfiguration {
 
     /**

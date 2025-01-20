@@ -6,7 +6,6 @@ import com.gewuyou.baseforge.jwt.autoconfigure.handler.JwtHandler
 import com.gewuyou.baseforge.jwt.autoconfigure.service.JwtService
 import com.gewuyou.baseforge.jwt.autoconfigure.service.impl.DefaultJwtService
 import com.gewuyou.baseforge.redis.service.CacheService
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.Configuration
  * @author gewuyou
  * @since 2024-12-31 15:29:40
  */
-@EnableAutoConfiguration
 @Configuration
 @EnableConfigurationProperties(JwtProperties::class)
 class JwtAutoConfiguration {

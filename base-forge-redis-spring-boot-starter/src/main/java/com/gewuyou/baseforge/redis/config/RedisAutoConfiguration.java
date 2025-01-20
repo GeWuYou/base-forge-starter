@@ -14,7 +14,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.gewuyou.baseforge.redis.service.CacheService;
 import com.gewuyou.baseforge.redis.service.impl.CacheServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -33,7 +32,6 @@ import java.time.format.DateTimeFormatter;
  * @author gewuyou
  * @since 2024-04-26 下午10:28:01
  */
-@EnableAutoConfiguration
 @Configuration
 @Slf4j
 public class RedisAutoConfiguration {
