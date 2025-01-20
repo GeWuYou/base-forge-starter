@@ -1,6 +1,8 @@
 package com.gewuyou.baseforge.autoconfigure.web.config.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -9,8 +11,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author gewuyou
  * @since 2024-12-18 16:00:48
  */
-@ConfigurationProperties(prefix = "base-forge.web.page")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ConfigurationProperties(prefix = "base-forge.web.page")
 public class PageProperties {
     /**
      * 默认每页显示数量

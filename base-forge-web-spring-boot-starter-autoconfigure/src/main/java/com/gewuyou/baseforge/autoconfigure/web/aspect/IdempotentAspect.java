@@ -12,6 +12,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2024-07-20 上午12:00:39
  */
 @Aspect
+@Component
 @Slf4j
 public class IdempotentAspect {
     private final CacheService cacheService;

@@ -1,69 +1,34 @@
 package com.gewuyou.baseforge.autoconfigure.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gewuyou.baseforge.autoconfigure.i18n.config.I18nAutoConfiguration;
 import com.gewuyou.baseforge.autoconfigure.web.aspect.IdempotentAspect;
 import com.gewuyou.baseforge.autoconfigure.web.aspect.ReadWriteLockAspect;
 import com.gewuyou.baseforge.autoconfigure.web.config.entity.PageProperties;
-import com.gewuyou.baseforge.autoconfigure.web.config.entity.WebStarterProperties;
+import com.gewuyou.baseforge.autoconfigure.web.filter.RequestFilter;
 import com.gewuyou.baseforge.autoconfigure.web.handler.GlobalExceptionHandler;
 import com.gewuyou.baseforge.autoconfigure.web.interceptor.AccessLimitInterceptor;
 import com.gewuyou.baseforge.autoconfigure.web.interceptor.PaginationInterceptor;
 import com.gewuyou.baseforge.redis.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.lang.NonNull;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Web 自动配置
+ * Web 自动 配置类
  *
  * @author gewuyou
- * @since 2024-11-13 11:01:23
+ * @since 2025-01-19 19:29:39
  */
-@EnableAutoConfiguration
 @Configuration
-@EnableConfigurationProperties({PageProperties.class, WebStarterProperties.class})
+@EnableConfigurationProperties({PageProperties.class})
 @Slf4j
-public class WebAutoConfiguration implements WebMvcConfigurer {
-
-    private final AccessLimitInterceptor accessLimitInterceptor;
-    private final PaginationInterceptor paginationInterceptor;
-
-    public WebAutoConfiguration(
-            @Lazy
-            AccessLimitInterceptor accessLimitInterceptor,
-            @Lazy
-            PaginationInterceptor paginationInterceptor
-    ) {
-        this.accessLimitInterceptor = accessLimitInterceptor;
-        this.paginationInterceptor = paginationInterceptor;
-    }
-
-    /**
-     * Add Spring MVC lifecycle interceptors for pre- and post-processing of
-     * controller method invocations and resource handler requests.
-     * Interceptors can be registered to apply to all requests or be limited
-     * to a subset of URL patterns.
-     *
-     * @param registry the InterceptorRegistry to add interceptors to
-     */
-    @Override
-    public void addInterceptors(@NonNull InterceptorRegistry registry) {
-        log.info("开始注册拦截器");
-        log.info("添加访问限制拦截器");
-        registry.addInterceptor(accessLimitInterceptor);
-        log.info("添加分页拦截器");
-        registry.addInterceptor(paginationInterceptor);
-        log.info("注册拦截器完成");
-    }
-
+public class WebAutoConfiguration {
     /**
      * 创建 AccessLimitInterceptor
      *
@@ -75,6 +40,7 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
     public AccessLimitInterceptor createAccessLimitInterceptor(
             CacheService cacheService,
             ObjectMapper objectMapper,
+            @Qualifier(I18nAutoConfiguration.MESSAGE_SOURCE_BEAN_NAME)
             MessageSource i18nMessageSource
     ) {
         return new AccessLimitInterceptor(cacheService, objectMapper, i18nMessageSource);
@@ -119,7 +85,17 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
      * @return GlobalExceptionHandler
      */
     @Bean
-    public GlobalExceptionHandler globalExceptionHandler(MessageSource i18nMessageSource) {
+    public GlobalExceptionHandler globalExceptionHandler(@Qualifier(I18nAutoConfiguration.MESSAGE_SOURCE_BEAN_NAME) MessageSource i18nMessageSource) {
         return new GlobalExceptionHandler(i18nMessageSource);
+    }
+
+    @Bean
+    public FilterRegistrationBean<RequestFilter> createFilterRegistrationBean() {
+        FilterRegistrationBean<RequestFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new RequestFilter());
+        // 默认拦截所有请求
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(1);
+        return registrationBean;
     }
 }

@@ -1,7 +1,7 @@
 package com.gewuyou.baseforge.autoconfigure.web.filter
 
+import com.gewuyou.baseforge.autoconfigure.util.RequestIdUtil
 import com.gewuyou.baseforge.core.constants.WebCommonConstant
-import com.gewuyou.baseforge.entities.web.util.RequestIdUtil
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest
@@ -9,6 +9,8 @@ import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.MDC
+import org.springframework.http.HttpMethod
+import org.springframework.stereotype.Component
 
 /**
  *请求过滤器
@@ -16,9 +18,14 @@ import org.slf4j.MDC
  * @since 2025-01-02 14:31:07
  * @author gewuyou
  */
+@Component
 class RequestFilter : Filter {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val httpRequest = request as HttpServletRequest
+        // 跳过OPTIONS请求
+        if (shouldSkipRequest(httpRequest)) {
+            return chain.doFilter(request, response)
+        }
         try {
             // 尝试从请求头中获取 requestId
             httpRequest.getHeader(WebCommonConstant.REQUEST_ID_HEADER)?.also {
@@ -43,6 +50,24 @@ class RequestFilter : Filter {
             // 清理当前线程的 RequestId，防止内存泄漏
             RequestIdUtil.removeRequestId()
             MDC.remove(WebCommonConstant.REQUEST_ID_MDC_KEY)
+        }
+    }
+
+    // 检测请求是否需要跳过
+    private fun shouldSkipRequest(httpRequest: HttpServletRequest): Boolean {
+        val method = httpRequest.method
+        return when {
+            // 跳过 OPTIONS 请求
+            HttpMethod.OPTIONS.equals(method) -> true
+            // 跳过静态资源请求
+            HttpMethod.GET.equals(method) && httpRequest.requestURI.matches(Regex(".*\\.(css|js|png|jpg|jpeg|gif|svg)")) -> true
+            // 跳过 HEAD 请求
+            HttpMethod.HEAD.equals(method) -> true
+            // 跳过 TRACE 请求
+            HttpMethod.TRACE.equals(method) -> true
+            // 跳过健康检查请求
+            httpRequest.requestURI.startsWith("/actuator/health") || httpRequest.requestURI == "/health" -> true
+            else -> false
         }
     }
 }

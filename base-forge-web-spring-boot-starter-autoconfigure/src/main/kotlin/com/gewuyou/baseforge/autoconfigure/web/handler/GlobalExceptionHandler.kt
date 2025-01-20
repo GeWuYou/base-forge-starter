@@ -91,14 +91,16 @@ class GlobalExceptionHandler(
     @ExceptionHandler(InternalException::class)
     fun handleGlobalException(e: InternalException): Result<String> {
         log.error("内部异常: 异常信息: {}", e.errorMessage, e)
-        log.error(
-            "i18nMessage: {}", i18nMessageSource
-                .getMessage(
-                    e
-                        .internalInformation
-                        .responseI8nMessageCode, null, LocaleContextHolder.getLocale()
-                )
-        )
+        if(e.internalInformation!= null){
+            log.error(
+                "i18nMessage: {}", i18nMessageSource
+                    .getMessage(
+                        e
+                            .internalInformation
+                            .responseI8nMessageCode, null, LocaleContextHolder.getLocale()
+                    )
+            )
+        }
         return Result.failure(WebResponseInformation.INTERNAL_SERVER_ERROR, i18nMessageSource)
     }
 }
