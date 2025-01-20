@@ -12,6 +12,10 @@ plugins {
     // 引入kt
     id 'org.jetbrains.kotlin.jvm' version '2.1.0'
     id 'org.jetbrains.kotlin.plugin.spring' version '2.1.0'
+    // 让kt支持访问java的lombok注解
+    id 'org.jetbrains.kotlin.plugin.lombok' version '2.1.0'
+    // 让kt支持jpa
+    id 'org.jetbrains.kotlin.plugin.jpa' version '2.1.0'
 }
 /**
  * 由于 Kotlin 插件被引入时会自动添加依赖，但根项目不需要 Kotlin 依赖，因此需要排除 Kotlin 依赖
@@ -36,6 +40,8 @@ subprojects {
         plugin('io.spring.dependency-management')
         plugin('org.jetbrains.kotlin.jvm')
         plugin('org.jetbrains.kotlin.plugin.spring')
+        plugin('org.jetbrains.kotlin.plugin.lombok')
+        plugin('org.jetbrains.kotlin.plugin.jpa')
         // 导入仓库配置
         from(file("$configDir/repositories.gradle"))
         // 导入依赖管理配置

@@ -8,7 +8,7 @@ ext {
     set('springDocVersion', "2.6.0")
     set('userAgentUtilsVersion', "1.21")
     set('jjwtVersion', '0.12.6')
-    set('grpcVersion', "1.68.0")
+    set('grpcVersion', "1.69.0")
     set('commonsLang3Version', "3.17.0")
     set('kotlinVersion', '2.1.0')
 }
