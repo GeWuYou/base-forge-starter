@@ -85,6 +85,19 @@ public class PageResult<T> {
                 .hasNext(currentPage < totalPages)
                 .build();
     }
+    public static <T> PageResult<T> of(int currentPage,int pageSize, long totalRecords,List<T> records) {
+        long totalPages = totalRecords % pageSize == 0? totalRecords / pageSize : totalRecords / pageSize + 1;
+        return PageResult
+                .<T>builder()
+                .records(records)
+                .totalRecords(totalRecords)
+                .currentPage(currentPage)
+                .pageSize(pageSize)
+                .totalPages(totalPages)
+                .hasPrevious(currentPage > 1)
+                .hasNext(currentPage < totalPages)
+                .build();
+    }
     public static <T> PageResult<T> of(long currentPage,long pageSize) {
         return PageResult
                 .<T>builder()

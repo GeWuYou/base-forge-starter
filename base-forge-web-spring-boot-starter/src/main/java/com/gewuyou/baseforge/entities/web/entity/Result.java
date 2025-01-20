@@ -2,6 +2,7 @@ package com.gewuyou.baseforge.entities.web.entity;
 
 
 import com.gewuyou.baseforge.autoconfigure.i18n.entity.ResponseInformation;
+import com.gewuyou.baseforge.autoconfigure.util.RequestIdUtil;
 import com.gewuyou.baseforge.entities.web.i18n.enums.WebResponseInformation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -40,12 +41,18 @@ public class Result<T> implements Serializable {
      */
     @Schema(description = "结果数据")
     private transient T data;
+    /**
+     * 请求ID，用于标识每个请求
+     */
+    @Schema(description = "请求ID")
+    private String requestId;
 
     private Result(ResponseInformation responseInformation, boolean success, T data, MessageSource messageSource, Object... args) {
         this.code = responseInformation.getResponseCode();
         this.success = success;
         this.message = messageSource.getMessage(responseInformation.getResponseI8nMessageCode(), args, LocaleContextHolder.getLocale());
         this.data = data;
+        this.requestId = RequestIdUtil.getRequestId();
     }
 
 
@@ -54,24 +61,28 @@ public class Result<T> implements Serializable {
         this.success = success;
         this.message = messageSource.getMessage(responseInformation.getResponseI8nMessageCode(), null, LocaleContextHolder.getLocale());
         this.data = data;
+        this.requestId = RequestIdUtil.getRequestId();
     }
 
     private Result(Integer code, String i18nMessageCode, MessageSource messageSource, Object... args) {
         this.code = code;
         this.message = messageSource.getMessage(i18nMessageCode, args, LocaleContextHolder.getLocale());
         this.success = false;
+        this.requestId = RequestIdUtil.getRequestId();
     }
 
     private Result(Integer code, String i18nMessageCode, MessageSource messageSource) {
         this.code = code;
         this.message = messageSource.getMessage(i18nMessageCode, null, LocaleContextHolder.getLocale());
         this.success = false;
+        this.requestId = RequestIdUtil.getRequestId();
     }
 
     private Result(ResponseInformation responseInformation, MessageSource messageSource, Object... args) {
         this.code = responseInformation.getResponseCode();
         this.message = messageSource.getMessage(responseInformation.getResponseI8nMessageCode(), args, LocaleContextHolder.getLocale());
         this.success = false;
+        this.requestId = RequestIdUtil.getRequestId();
     }
 
     /**
