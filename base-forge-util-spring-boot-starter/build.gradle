@@ -11,7 +11,4 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl'
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
     implementation 'io.jsonwebtoken:jjwt-jackson'
-    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
-    implementation 'org.springframework.security:spring-security-core'
-
 }

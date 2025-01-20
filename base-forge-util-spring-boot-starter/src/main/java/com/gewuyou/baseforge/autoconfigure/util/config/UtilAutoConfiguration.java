@@ -2,7 +2,6 @@ package com.gewuyou.baseforge.autoconfigure.util.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gewuyou.baseforge.autoconfigure.util.BeanCopyUtil;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
  * @author gewuyou
  * @since 2024-11-13 14:48:32
  */
-@EnableAutoConfiguration
 @Configuration
 
 public class UtilAutoConfiguration {

@@ -1,4 +1,4 @@
-package com.gewuyou.baseforge.entities.web.util;
+package com.gewuyou.baseforge.autoconfigure.util;
 
 import java.util.UUID;
 
