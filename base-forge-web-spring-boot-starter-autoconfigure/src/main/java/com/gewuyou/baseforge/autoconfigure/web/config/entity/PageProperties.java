@@ -36,4 +36,8 @@ public class PageProperties {
      * 分页大小参数名
      */
     private String pageSizeParamName = "size";
+    /**
+     * 是否启用拦截器
+     */
+    private Boolean enable = false;
 }
