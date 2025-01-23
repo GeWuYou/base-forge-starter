@@ -1,3 +1,8 @@
 dependencies {
     implementation project(":base-forge-i18n-spring-boot-starter")
+    implementation project(":base-forge-core-spring-boot-starter")
+    api("org.springframework.boot:spring-boot-starter-aop")
+    // 核心协程库
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
 }
