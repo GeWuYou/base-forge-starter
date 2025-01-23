@@ -55,8 +55,12 @@ subprojects {
     }
     jar {
         enabled = true
+        // 打包策略 EXCLUDE 排除重复
+        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     }
 }
+
+
 tasks.named('test') {
     useJUnitPlatform()
 }

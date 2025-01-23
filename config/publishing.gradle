@@ -37,6 +37,36 @@ def configurePublishing(String name, String groupId, String artifactId, String v
                 }
                 // 如果需要将源代码包添加到发布中，可以添加如下代码 sourceTask 来自自定义任务
                 artifact sourceTask
+                // 配置POM文件
+                pom {
+                    it.name = 'base-forge-starter'
+                    description = 'A concise description of my library'
+                    url = ''
+                    properties = [
+                            'inceptionYear': '2024',
+                            'artifactId': artifactId,
+                            'groupId': groupId,
+                            'projectUrl': 'https://github.com/gewuwo/base-forge-starter',
+                    ]
+                    licenses {
+                        license {
+                            it.name = 'The MIT License'
+                            url = 'http://www.opensource.org/licenses/mit-license.php'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'gewuyou'
+                            it.name = 'gewuyou'
+                            email = '1063891901@qq.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/gewuyou/base-forge.git'
+                        developerConnection = 'scm:git:ssh://github.com/gewuyou/base-forge.git'
+                        url = 'http://github.com/gewuyou/base-forge/'
+                    }
+                }
             }
         }
     }
