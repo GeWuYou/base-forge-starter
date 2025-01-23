@@ -18,6 +18,11 @@ import java.util.function.Supplier;
  */
 public record AsyncServiceImpl(Executor executor) implements AsyncService {
 
+    @Override
+    public Executor getAsyncExecutor() {
+        return this.executor;
+    }
+
     /**
      * 异步执行Supplier
      *

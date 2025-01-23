@@ -25,7 +25,6 @@ public class AsyncTaskExecutorProperties {
     /**
      * 最大线程数 (CPU核数*2+1)
      */
-
     private static final int MAX_POOL_SIZE = CPU_COUNT * 2 + 1;
     /**
      * 队列容量
@@ -55,4 +54,8 @@ public class AsyncTaskExecutorProperties {
      * 线程名称前缀
      */
     private String threadNamePrefix = "async-task-executor-";
+    /**
+     * 是否开启异步MDC切面
+     */
+    private boolean enableAsyncMdcAspect = false;
 }

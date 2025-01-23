@@ -1,24 +1,29 @@
 package com.gewuyou.baseforge.autoconfigure.async.config;
 
+import com.gewuyou.baseforge.autoconfigure.async.aspect.AsyncMdcContextAspect;
 import com.gewuyou.baseforge.autoconfigure.async.config.entity.AsyncTaskExecutorProperties;
 import com.gewuyou.baseforge.autoconfigure.async.service.AsyncService;
 import com.gewuyou.baseforge.autoconfigure.async.service.impl.AsyncServiceImpl;
+import com.gewuyou.baseforge.core.constants.WebCommonConstant;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -30,19 +35,30 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 2024-11-13 16:49:47
  */
 @Slf4j
-@EnableAutoConfiguration
 @Configuration
 @EnableConfigurationProperties(AsyncTaskExecutorProperties.class)
-public class AsyncTaskExecutorAutoConfiguration implements AsyncConfigurer , DisposableBean {
+public class AsyncTaskExecutorAutoConfiguration implements AsyncConfigurer, DisposableBean {
     private final AsyncTaskExecutorProperties properties;
     private final RejectedExecutionHandler rejectedExecutionHandler;
     private ThreadPoolTaskExecutor executor;
+
     @Autowired
     public AsyncTaskExecutorAutoConfiguration(
             AsyncTaskExecutorProperties properties,
+            @Lazy
             RejectedExecutionHandler rejectedExecutionHandler) {
         this.properties = properties;
         this.rejectedExecutionHandler = rejectedExecutionHandler;
+    }
+
+    /**
+     * 创建异步MDC上下文切面 只有当配置中开启了async.task-executor.enableAsyncMdcAspect=true时才会创建
+     * @return 异步MDC上下文切面
+     */
+    @Bean
+    @ConditionalOnProperty(name = "async.task-executor.enableAsyncMdcAspect", havingValue = "true")
+    public AsyncMdcContextAspect createAsyncMdcContextAspect() {
+        return new AsyncMdcContextAspect();
     }
 
     @Bean
@@ -76,6 +92,20 @@ public class AsyncTaskExecutorAutoConfiguration implements AsyncConfigurer , Dis
         threadPoolTaskExecutor.setThreadNamePrefix(properties.getThreadNamePrefix());
         // 设置拒绝策略    当前策略:CallerRunsPolicy  由调用者线程来运行任务使得执行退化为同步
         threadPoolTaskExecutor.setRejectedExecutionHandler(rejectedExecutionHandler);
+        // 设置线程装饰器 设置MDC上下文
+        threadPoolTaskExecutor.setTaskDecorator(runnable -> {
+            Optional.ofNullable(MDC.getCopyOfContextMap()).ifPresent(
+                    contextMap -> {
+                        try {
+                            MDC.setContextMap(contextMap);
+                            runnable.run();
+                        } finally {
+                            MDC.clear();
+                        }
+                    }
+            );
+            return runnable;
+        });
         threadPoolTaskExecutor.initialize();
         this.executor = threadPoolTaskExecutor;
         return threadPoolTaskExecutor;
@@ -112,11 +142,19 @@ public class AsyncTaskExecutorAutoConfiguration implements AsyncConfigurer , Dis
      */
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return (ex, method, params) -> log.error("执行异步方法时发生异常，方法名： [{}]，参数：[{}]，异常信息： [{}]", method.getName(), Arrays.toString(params), ex.getMessage(), ex);
+        String requestId = MDC.get(WebCommonConstant.REQUEST_ID_MDC_KEY);
+        if (Objects.isNull(requestId)) {
+            return (ex, method, params) -> log.error("执行异步方法时发生异常，方法名： [{}]，参数：[{}]，异常信息： [{}]",
+                    method.getName(), Arrays.toString(params), ex.getMessage(), ex);
+        } else {
+            return (ex, method, params) -> log.error("执行异步方法时发生异常，请求id： [{}]，方法名： [{}]，参数：[{}]，异常信息： [{}]",
+                    requestId, method.getName(), Arrays.toString(params), ex.getMessage(), ex);
+        }
     }
 
     /**
      * 创建默认的异步服务
+     *
      * @return 异步服务
      */
     @Bean(name = "defaultAsyncService")
@@ -127,11 +165,10 @@ public class AsyncTaskExecutorAutoConfiguration implements AsyncConfigurer , Dis
 
     /**
      * Invoked by the containing {@code BeanFactory} on destruction of a bean.
-     *
      */
     @Override
     public void destroy() {
-        if(Objects.nonNull(executor)){
+        if (Objects.nonNull(executor)) {
             executor.shutdown();
         }
     }

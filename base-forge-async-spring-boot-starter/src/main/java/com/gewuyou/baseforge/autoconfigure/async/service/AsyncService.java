@@ -2,6 +2,7 @@ package com.gewuyou.baseforge.autoconfigure.async.service;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -13,6 +14,11 @@ import java.util.function.Supplier;
  * @since 2024-12-18 22:47:56
  */
 public interface AsyncService {
+    /**
+     * 获取异步执行器
+     * @return 异步执行器
+     */
+    Executor getAsyncExecutor();
     /**
      * 异步执行Supplier
      *
