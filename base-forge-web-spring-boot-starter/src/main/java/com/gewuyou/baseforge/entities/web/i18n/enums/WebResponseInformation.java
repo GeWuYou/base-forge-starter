@@ -31,6 +31,9 @@ public enum WebResponseInformation implements ResponseInformation {
      * 操作成功
      */
     OPERATION_SUCCESSFUL(HttpStatus.OK.value(), "web.operation.success"),
+    /**
+     * 设备ID未提供
+     */
     DEVICE_ID_NOT_PROVIDED(HttpStatus.BAD_REQUEST.value(), "web.device.id.not.provided");
 
     private final int code;
