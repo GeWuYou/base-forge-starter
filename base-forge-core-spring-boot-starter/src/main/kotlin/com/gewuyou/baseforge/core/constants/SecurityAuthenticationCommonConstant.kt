@@ -11,4 +11,9 @@ object SecurityAuthenticationCommonConstant {
      * 幂等性登录请求前缀
      */
     const val IDEMPOTENT_LOGIN_REQUEST_PREFIX: String = "idempotent_login_request_"
+
+    /**
+     * 登录成功后，保存用户信息的key
+     */
+    const val USER_DETAILS = "userDetails"
 }
