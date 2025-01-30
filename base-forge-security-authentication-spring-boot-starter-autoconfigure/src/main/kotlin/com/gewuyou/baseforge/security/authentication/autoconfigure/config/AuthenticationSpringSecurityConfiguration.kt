@@ -3,7 +3,6 @@ package com.gewuyou.baseforge.security.authentication.autoconfigure.config
 
 import com.gewuyou.baseforge.security.authentication.autoconfigure.config.entity.SecurityAuthenticationProperties
 import com.gewuyou.baseforge.security.authentication.entities.extension.cleanUnNeedConfig
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -21,7 +20,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
  * @since 2025-01-03 10:19:48
  */
 @Configuration
-@EnableAutoConfiguration
 class AuthenticationSpringSecurityConfiguration(
     private val filters: List<AbstractAuthenticationProcessingFilter>,
     private val authenticationExceptionHandler: AuthenticationEntryPoint,

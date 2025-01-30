@@ -11,6 +11,7 @@ import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.Logou
 import com.gewuyou.baseforge.security.authentication.autoconfigure.provider.NormalAuthenticationProvider;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.AuthenticationUserDetailsService;
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtAuthenticationService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
@@ -76,7 +77,7 @@ public class SecurityAuthenticationAutoConfiguration {
             ObjectMapper objectMapper,
             JwtAuthenticationService jwtAuthenticationService,
             AuthenticationUserDetailsService authenticationUserDetailsService,
-            MessageSource i18nMessageSource
+            @Qualifier("i18nMessageSource") MessageSource i18nMessageSource
     ) {
         return new LoginSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, authenticationUserDetailsService, i18nMessageSource);
     }
@@ -91,9 +92,9 @@ public class SecurityAuthenticationAutoConfiguration {
     @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
     public AuthenticationFailureHandler createLoginFailHandler(
             ObjectMapper objectMapper,
-            MessageSource i18nMessageSource
+            @Qualifier("i18nMessageSource") MessageSource i18nMessageSource
     ) {
-        return new LoginFailJsonResponseHandler(objectMapper,i18nMessageSource);
+        return new LoginFailJsonResponseHandler(objectMapper, i18nMessageSource);
     }
 
     /**
@@ -164,9 +165,9 @@ public class SecurityAuthenticationAutoConfiguration {
     /**
      * 普通登录认证提供器
      *
-     * @param userCache          用户信息缓存
-     * @param authoritiesMapper  权限映射器
-     * @param passwordEncoder    密码加密器
+     * @param userCache                        用户信息缓存
+     * @param authoritiesMapper                权限映射器
+     * @param passwordEncoder                  密码加密器
      * @param authenticationUserDetailsService 用户信息服务
      * @return 普通登录认证提供器
      */
@@ -189,7 +190,7 @@ public class SecurityAuthenticationAutoConfiguration {
     @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
     public AuthenticationEntryPoint createAuthenticationEntryPoint(
             ObjectMapper objectMapper,
-            MessageSource i18nMessageSource
+            @Qualifier("i18nMessageSource") MessageSource i18nMessageSource
     ) {
         return new AuthenticationExceptionHandler(objectMapper, i18nMessageSource);
     }
@@ -205,7 +206,7 @@ public class SecurityAuthenticationAutoConfiguration {
     @ConditionalOnMissingBean(LogoutSuccessHandler.class)
     public LogoutSuccessHandler createLogoutSuccessHandler(ObjectMapper objectMapper,
                                                            JwtAuthenticationService jwtAuthenticationService,
-                                                           MessageSource i18nMessageSource
+                                                           @Qualifier("i18nMessageSource") MessageSource i18nMessageSource
     ) {
         return new LogoutSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, i18nMessageSource);
     }

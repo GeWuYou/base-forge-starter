@@ -165,7 +165,8 @@ public class NormalAuthenticationProvider extends AbstractAuthenticationProvider
                 authentication.getCredentials(),
                 this.authoritiesMapper.mapAuthorities(user.getAuthorities()));
         log.debug("身份验证成功用户: {}", result.getName());
-        result.setDetails(authentication.getDetails());
+        // 设置用户详情
+        result.setDetails(principal);
         return result;
     }
 

@@ -1,6 +1,7 @@
 package com.gewuyou.baseforge.security.authentication.autoconfigure.handler
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.gewuyou.baseforge.core.constants.SecurityAuthenticationCommonConstant
 import com.gewuyou.baseforge.core.extension.getDeviceId
 import com.gewuyou.baseforge.core.extension.log
 import com.gewuyou.baseforge.entities.web.entity.Result
@@ -47,10 +48,10 @@ class LoginSuccessJsonResponseHandler(
             log.error("获取设备Id失败!")
             throw AuthenticationException(SecurityAuthenticationResponseInformation.INTERNAL_SERVER_ERROR)
         }
-        // 生成access token
+        // 生成access token 这里userDetails使用Authentication.principal也行
         val accessToken =
             jwtAuthenticationService
-                .generateToken(principal, deviceId, null)
+                .generateToken(principal, deviceId, mapOf(SecurityAuthenticationCommonConstant.USER_DETAILS to authentication.details))
         // 生成刷新token
         val refreshToken = jwtAuthenticationService.generateRefreshToken(principal, deviceId)
         // 生成返回结果
