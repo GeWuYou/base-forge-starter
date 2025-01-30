@@ -2,6 +2,7 @@ package com.gewuyou.baseforge.autoconfigure.web.config;
 
 import com.gewuyou.baseforge.autoconfigure.web.interceptor.AccessLimitInterceptor;
 import com.gewuyou.baseforge.autoconfigure.web.interceptor.PaginationInterceptor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +20,12 @@ import java.util.Objects;
  * @since 2024-11-13 11:01:23
  */
 @Configuration
+@NoArgsConstructor
 @Slf4j
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
-    private final AccessLimitInterceptor accessLimitInterceptor;
-    private final PaginationInterceptor paginationInterceptor;
+    private AccessLimitInterceptor accessLimitInterceptor;
+    private PaginationInterceptor paginationInterceptor;
 
     @Autowired(required = false)
     public WebMvcConfiguration(
