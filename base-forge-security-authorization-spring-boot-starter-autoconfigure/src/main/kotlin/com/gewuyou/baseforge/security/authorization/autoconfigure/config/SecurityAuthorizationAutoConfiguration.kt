@@ -2,14 +2,15 @@ package com.gewuyou.baseforge.security.authorization.autoconfigure.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gewuyou.baseforge.core.exception.InternalException
+import com.gewuyou.baseforge.core.extension.log
 import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.SecurityAuthorizationProperties
 import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.AuthorizationFilter
 import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.JwtAuthorizationFilter
 import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.AuthorizationExceptionHandler
 import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.AuthorizationHandler
 import com.gewuyou.baseforge.security.authorization.autoconfigure.manager.DynamicAuthorizationManager
-import com.gewuyou.baseforge.security.authorization.autoconfigure.service.AuthorizationUserDetailsService
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
+import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
@@ -26,6 +27,7 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
  * @author gewuyou
  */
 @Configuration
+@AutoConfigureBefore(AuthorizationSpringSecurityConfiguration::class)
 @EnableConfigurationProperties(SecurityAuthorizationProperties::class)
 class SecurityAuthorizationAutoConfiguration {
     /**
@@ -34,6 +36,7 @@ class SecurityAuthorizationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(AccessDeniedHandler::class)
     fun createAccessDeniedHandler(objectMapper: ObjectMapper,i18nMessageSource: MessageSource):AccessDeniedHandler {
+        log.info("创建授权异常处理器...")
         return AuthorizationExceptionHandler(objectMapper,i18nMessageSource)
     }
     /**
@@ -48,18 +51,12 @@ class SecurityAuthorizationAutoConfiguration {
     * 动态授权管理器
     */
     @Bean
-    @ConditionalOnMissingBean(AuthorizationManager::class,AuthorizationHandler::class)
+    @ConditionalOnMissingBean(AuthorizationManager::class)
     fun createAuthorizationManager(authorizationHandler: AuthorizationHandler):AuthorizationManager<RequestAuthorizationContext> {
+        log.info("创建动态授权管理器...")
         return DynamicAuthorizationManager(authorizationHandler)
     }
-    /**
-    * 用户详情服务
-    */
-    @Bean
-    @ConditionalOnMissingBean(AuthorizationUserDetailsService::class)
-    fun createUserDetailsService():AuthorizationUserDetailsService {
-        throw InternalException("请实现AuthorizationUserDetailsService接口")
-    }
+
     /**
     * JWT授权服务
     */
@@ -73,7 +70,8 @@ class SecurityAuthorizationAutoConfiguration {
     */
     @Bean
     @ConditionalOnMissingBean(AuthorizationFilter::class)
-    fun createAuthorizationFilter(jwtAuthorizationService: JwtAuthorizationService, authorizationUserDetailsService: AuthorizationUserDetailsService):AuthorizationFilter {
-        return JwtAuthorizationFilter(jwtAuthorizationService,authorizationUserDetailsService)
+    fun createAuthorizationFilter(jwtAuthorizationService: JwtAuthorizationService):AuthorizationFilter {
+        log.info("创建授权过滤器...")
+        return JwtAuthorizationFilter(jwtAuthorizationService)
     }
 }

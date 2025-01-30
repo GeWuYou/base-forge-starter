@@ -1,9 +1,9 @@
 package com.gewuyou.baseforge.security.authorization.autoconfigure.filter
 
+import com.gewuyou.baseforge.core.constants.SecurityAuthenticationCommonConstant
 import com.gewuyou.baseforge.core.extension.getAccessToken
 import com.gewuyou.baseforge.core.extension.log
 import com.gewuyou.baseforge.security.authentication.entities.token.NormalAuthenticationToken
-import com.gewuyou.baseforge.security.authorization.autoconfigure.service.AuthorizationUserDetailsService
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
 import com.gewuyou.baseforge.security.authorization.entities.exception.AuthorizationException
 import com.gewuyou.baseforge.security.authorization.entities.i18n.enums.SecurityAuthorizationResponseInformation
@@ -11,6 +11,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.filter.OncePerRequestFilter
 
 /**
@@ -20,8 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter
  * @author gewuyou
  */
 class JwtAuthorizationFilter(
-    private val jwtAuthorizationService: JwtAuthorizationService,
-    private val authorizationUserDetailsService: AuthorizationUserDetailsService
+    private val jwtAuthorizationService: JwtAuthorizationService
 ) : OncePerRequestFilter(), AuthorizationFilter {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -36,14 +36,11 @@ class JwtAuthorizationFilter(
         // 验证token
         jwtAuthorizationService.validateToken(token)
             ?.let {
-                // 解析返回的用户信息对象
-                // 加载用户信息
-                val userDetails = authorizationUserDetailsService.loadUserByPrincipal(it.principal)?:run{
-                    throw AuthorizationException(SecurityAuthorizationResponseInformation.USER_DETAILS_NOT_FOUND)
-                }
+                // 从token中获取用户信息
+                val userDetails = it.claims[SecurityAuthenticationCommonConstant.USER_DETAILS] as UserDetails
                 log.info("token 验证通过，用户信息：{}", userDetails)
                 // 从token中获取用户信息，放入request中
-                request.setAttribute("userDetails", userDetails)
+                request.setAttribute(SecurityAuthenticationCommonConstant.USER_DETAILS, userDetails)
                 // 生成token并将用户信息放入security context中
                 SecurityContextHolder.getContext().authentication =
                     NormalAuthenticationToken.authenticated(userDetails,userDetails.authorities)
