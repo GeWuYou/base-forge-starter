@@ -1,5 +1,6 @@
 dependencies {
     api 'org.springframework.boot:spring-boot-starter-security'
+    api project(":base-forge-jwt-spring-boot-starter")
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
     implementation project(":base-forge-i18n-spring-boot-starter")
     implementation project(":base-forge-core-spring-boot-starter")
@@ -7,5 +8,11 @@ dependencies {
     implementation project(":base-forge-redis-spring-boot-starter")
     implementation(project(':base-forge-security-authentication-spring-boot-starter'))
     implementation project(':base-forge-json-spring-boot-starter')
-    implementation project(":base-forge-json-spring-boot-starter")
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    implementation 'io.jsonwebtoken:jjwt-api'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+    implementation 'io.jsonwebtoken:jjwt-impl'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+    implementation 'io.jsonwebtoken:jjwt-jackson'
 }
