@@ -3,6 +3,7 @@ package com.gewuyou.baseforge.core.extension
 import com.gewuyou.baseforge.core.constants.WebCommonConstant
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.http.server.reactive.ServerHttpRequest
 
 
 /**
@@ -41,4 +42,11 @@ fun ServletRequest.getJsonBody(): String {
  */
 fun HttpServletRequest.getAccessToken(): String? {
     return this.getHeader("Authorization")?.removePrefix("Bearer ")
+}
+
+/**
+ * 从请求头中获取access token
+ */
+fun ServerHttpRequest.getAccessToken(): String? {
+    return this.headers.getFirst("Authorization")?.removePrefix("Bearer ")
 }
