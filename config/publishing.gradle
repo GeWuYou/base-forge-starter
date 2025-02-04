@@ -79,7 +79,6 @@ List.of(
         new PublishProject("i18n", "base-forge-i18n-spring-boot-starter", "1.0.4"),
         new PublishProject("json", "base-forge-json-spring-boot-starter", "1.0.1"),
         new PublishProject("jwt", "base-forge-jwt-spring-boot-starter", "1.0.0"),
-        new PublishProject("jwtAutoconfigure", "base-forge-jwt-spring-boot-starter-autoconfigure", "1.0.0"),
         new PublishProject("log", "base-forge-log-spring-boot-starter", "1.0.0"),
         new PublishProject("logAutoconfigure", "base-forge-log-spring-boot-starter-autoconfigure", "1.0.0"),
         new PublishProject("mybatisExtension", "base-forge-mybatis-extension-spring-boot-starter", "1.0.0"),

@@ -11,6 +11,7 @@ ext {
     set('grpcVersion', "1.69.0")
     set('commonsLang3Version', "3.17.0")
     set('kotlinVersion', '2.1.0')
+    set('reactorVersion', "3.7.2")
 }
 dependencyManagement {
     imports {
@@ -36,5 +37,7 @@ dependencyManagement {
         dependency("io.jsonwebtoken:jjwt-api:${jjwtVersion}")
         dependency("io.jsonwebtoken:jjwt-impl:${jjwtVersion}")
         dependency("io.jsonwebtoken:jjwt-jackson:${jjwtVersion}")
+
+        dependency "io.projectreactor:reactor-core:${reactorVersion}"
     }
 }
