@@ -58,13 +58,13 @@ class RequestFilter : Filter {
         val method = httpRequest.method
         return when {
             // 跳过 OPTIONS 请求
-            HttpMethod.OPTIONS.equals(method) -> true
+            HttpMethod.OPTIONS.name() == method -> true
             // 跳过静态资源请求
-            HttpMethod.GET.equals(method) && httpRequest.requestURI.matches(Regex(".*\\.(css|js|png|jpg|jpeg|gif|svg)")) -> true
+            HttpMethod.GET.name() == method && httpRequest.requestURI.matches(Regex(".*\\.(css|js|png|jpg|jpeg|gif|svg)")) -> true
             // 跳过 HEAD 请求
-            HttpMethod.HEAD.equals(method) -> true
+            HttpMethod.HEAD.name() == method -> true
             // 跳过 TRACE 请求
-            HttpMethod.TRACE.equals(method) -> true
+            HttpMethod.TRACE.name() == method -> true
             // 跳过健康检查请求
             httpRequest.requestURI.startsWith("/actuator/health") || httpRequest.requestURI == "/health" -> true
             else -> false
