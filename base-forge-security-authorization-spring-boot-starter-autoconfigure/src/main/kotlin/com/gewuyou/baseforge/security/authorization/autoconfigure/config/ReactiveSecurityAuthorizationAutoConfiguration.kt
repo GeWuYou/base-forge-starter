@@ -6,11 +6,11 @@ import com.gewuyou.baseforge.core.extension.log
 import com.gewuyou.baseforge.redis.service.CacheService
 import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.JwtProperties
 import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.SecurityAuthorizationProperties
-import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.AuthorizationFilter
-import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.JwtAuthorizationFilter
-import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.AuthorizationExceptionHandler
-import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.AuthorizationHandler
-import com.gewuyou.baseforge.security.authorization.autoconfigure.manager.DynamicAuthorizationManager
+import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.ReactiveAuthorizationFilter
+import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.ReactiveJwtAuthorizationFilter
+import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.ReactiveAuthorizationExceptionHandler
+import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.ReactiveAuthorizationHandler
+import com.gewuyou.baseforge.security.authorization.autoconfigure.manager.ReactiveDynamicAuthorizationManager
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.impl.JwtAuthorizationServiceImpl
 import com.gewuyou.baseforge.security.authorization.autoconfigure.validator.DefaultJwtValidator
@@ -22,48 +22,50 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authorization.AuthorizationManager
-import org.springframework.security.web.access.AccessDeniedHandler
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext
+import org.springframework.security.authorization.ReactiveAuthorizationManager
+import org.springframework.security.web.server.authorization.AuthorizationContext
+import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler
 
 /**
- *安全授权自动配置
+ *反应式安全授权自动配置
  *
- * @since 2025-01-08 11:03:43
+ * @since 2025-02-03 15:23:53
  * @author gewuyou
  */
 @Configuration
-@AutoConfigureBefore(AuthorizationSpringSecurityConfiguration::class)
+@AutoConfigureBefore(ReactiveAuthorizationSpringSecurityConfiguration::class)
 @EnableConfigurationProperties(SecurityAuthorizationProperties::class, JwtProperties::class)
-@ConditionalOnProperty(prefix = "base-forge.security.authorization", name = ["isWebFlux"], havingValue = "false")
-class SecurityAuthorizationAutoConfiguration {
+@ConditionalOnProperty(prefix = "base-forge.security.authorization", name = ["isWebFlux"], havingValue = "true")
+class ReactiveSecurityAuthorizationAutoConfiguration {
     /**
-     * 授权异常处理器
+     * 反应式授权异常处理器
      */
     @Bean
-    @ConditionalOnMissingBean(AccessDeniedHandler::class)
-    fun createAccessDeniedHandler(objectMapper: ObjectMapper, i18nMessageSource: MessageSource): AccessDeniedHandler {
+    @ConditionalOnMissingBean(ServerAccessDeniedHandler::class)
+    fun createAccessDeniedHandler(objectMapper: ObjectMapper, i18nMessageSource: MessageSource): ServerAccessDeniedHandler {
         log.info("创建授权异常处理器...")
-        return AuthorizationExceptionHandler(objectMapper, i18nMessageSource)
+        return ReactiveAuthorizationExceptionHandler(objectMapper, i18nMessageSource)
     }
 
     /**
-     * 动态授权处理器
-     */
+    * 反应式动态授权处理器
+    */
     @Bean
-    @ConditionalOnMissingBean(AuthorizationHandler::class)
-    fun createAuthorizationHandler(): AuthorizationHandler {
-        throw InternalException("请实现AuthorizationHandler接口")
+    @ConditionalOnMissingBean(ReactiveAuthorizationHandler::class)
+    fun createReactiveAuthorizationHandler():ReactiveAuthorizationHandler {
+        throw InternalException("请实现ReactiveAuthorizationHandler接口")
     }
 
     /**
-     * 动态授权管理器
-     */
+    * 反应式动态授权管理器
+    */
     @Bean
-    @ConditionalOnMissingBean(AuthorizationManager::class)
-    fun createAuthorizationManager(authorizationHandler: AuthorizationHandler): AuthorizationManager<RequestAuthorizationContext> {
+    @ConditionalOnMissingBean(ReactiveAuthorizationManager::class)
+    fun createReactiveAuthorizationManager(
+        reactiveAuthorizationHandler: ReactiveAuthorizationHandler
+    ):ReactiveAuthorizationManager<AuthorizationContext> {
         log.info("创建动态授权管理器...")
-        return DynamicAuthorizationManager(authorizationHandler)
+        return ReactiveDynamicAuthorizationManager(reactiveAuthorizationHandler)
     }
 
     /**
@@ -81,13 +83,13 @@ class SecurityAuthorizationAutoConfiguration {
     }
 
     /**
-     * 授权过滤器
-     */
+    * 反应式授权过滤器
+    */
     @Bean
-    @ConditionalOnMissingBean(AuthorizationFilter::class)
-    fun createAuthorizationFilter(jwtAuthorizationService: JwtAuthorizationService): AuthorizationFilter {
+    @ConditionalOnMissingBean(ReactiveAuthorizationFilter::class)
+    fun createReactiveJwtAuthorizationFilter(jwtAuthorizationService: JwtAuthorizationService):ReactiveAuthorizationFilter {
         log.info("创建授权过滤器...")
-        return JwtAuthorizationFilter(jwtAuthorizationService)
+        return ReactiveJwtAuthorizationFilter(jwtAuthorizationService)
     }
 
     /**

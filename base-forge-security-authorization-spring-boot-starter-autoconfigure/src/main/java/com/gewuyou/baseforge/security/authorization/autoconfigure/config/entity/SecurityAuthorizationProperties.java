@@ -24,4 +24,9 @@ public class SecurityAuthorizationProperties {
      * 进行鉴权的请求路径
      */
     private String requestUrl = "/api";
+
+    /**
+     * 是否使用WebFlux
+     */
+    private Boolean isWebFlux = false;
 }

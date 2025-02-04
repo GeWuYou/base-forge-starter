@@ -20,7 +20,7 @@ import org.springframework.security.web.access.AccessDeniedHandler
 class AuthorizationExceptionHandler(
     private val objectMapper: ObjectMapper,
     private val i18nMessageSource: MessageSource
-): AccessDeniedHandler{
+) : AccessDeniedHandler {
     override fun handle(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -29,7 +29,14 @@ class AuthorizationExceptionHandler(
         response.status = HttpStatus.UNAUTHORIZED.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         val writer = response.writer
-        writer.print(objectMapper.writeValueAsString(Result.failure<String>(SecurityAuthorizationResponseInformation.PROHIBITION_OF_ACCESS,i18nMessageSource)))
+        writer.print(
+            objectMapper.writeValueAsString(
+                Result.failure<String>(
+                    SecurityAuthorizationResponseInformation.PROHIBITION_OF_ACCESS,
+                    i18nMessageSource
+                )
+            )
+        )
         writer.flush()
         writer.close()
     }

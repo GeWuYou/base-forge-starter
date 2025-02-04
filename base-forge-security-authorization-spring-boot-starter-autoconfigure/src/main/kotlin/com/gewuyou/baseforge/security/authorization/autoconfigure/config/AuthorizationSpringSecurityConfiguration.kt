@@ -4,6 +4,7 @@ import com.gewuyou.baseforge.security.authentication.entities.extension.cleanUnN
 import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.SecurityAuthorizationProperties
 import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.AuthorizationFilter
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authorization.AuthorizationManager
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @AutoConfigureAfter(SecurityAuthorizationAutoConfiguration::class)
+@ConditionalOnProperty(prefix = "base-forge.security.authorization", name = ["isWebFlux"], havingValue = "false")
 class AuthorizationSpringSecurityConfiguration(
     private val dynamicAuthorizationManager: AuthorizationManager<RequestAuthorizationContext>,
     private val jwtAuthorizationFilter: AuthorizationFilter,
@@ -41,7 +43,7 @@ class AuthorizationSpringSecurityConfiguration(
             // 开启授权
             .authorizeHttpRequests {
                 it
-                    .requestMatchers(authorizationProperties.requestUrl)
+                    .requestMatchers(*authorizationProperties.ignored)
                     .permitAll()
                     .anyRequest()
                     // 所有请求都需要经过授权

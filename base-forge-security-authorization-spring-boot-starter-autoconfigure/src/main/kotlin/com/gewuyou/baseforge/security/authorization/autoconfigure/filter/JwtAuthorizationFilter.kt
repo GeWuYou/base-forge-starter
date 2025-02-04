@@ -49,7 +49,5 @@ class JwtAuthorizationFilter(
             } ?: run {
             throw AuthorizationException(SecurityAuthorizationResponseInformation.ACCESS_TOKEN_HAS_EXPIRED)
         }
-        // 验证通过，放行
-        filterChain.doFilter(request, response)
     }
 }

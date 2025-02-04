@@ -28,7 +28,7 @@ class DynamicAuthorizationManager(
         context: RequestAuthorizationContext
     ): AuthorizationDecision {
         val request = context.request
-        // 获取请求逻辑
+        // 获取请求路径
         val requestURI = request.requestURI
         log.info("DynamicAuthorizationManager 检查请求: $requestURI")
         // 调用授权处理器进行授权
