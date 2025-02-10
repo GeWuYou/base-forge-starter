@@ -1,6 +1,8 @@
 package com.gewuyou.baseforge.autoconfigure.i18n.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
@@ -45,12 +48,12 @@ public class I18nAutoConfiguration {
 
     private List<String> scanBaseNames(String basePath) {
         List<String> baseNames = new ArrayList<>();
-        log.info("开始扫描 I18n 文件 {}" , basePath);
+        log.info("开始扫描 I18n 文件 {}", basePath);
         try {
             Resource[] resources = new PathMatchingResourcePatternResolver().getResources(basePath + "*.properties");
             for (Resource resource : resources) {
                 String path = resource.getURI().toString();
-                log.info("找到 I18n 文件路径: {}" , path);
+                log.info("找到 I18n 文件路径: {}", path);
                 // 转换路径为 Spring 的 basename 格式（去掉 .properties 后缀）
                 String baseName = path.substring(0, path.lastIndexOf(".properties"));
                 if (!baseNames.contains(baseName)) {
@@ -65,8 +68,20 @@ public class I18nAutoConfiguration {
 
     @Bean
     public LocaleResolver localeResolver() {
-        AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
-        localeResolver.setDefaultLocale(Locale.CHINA);
-        return localeResolver;
+        return new AcceptHeaderLocaleResolver() {
+            @NotNull
+            @Override
+            public Locale resolveLocale(@NotNull HttpServletRequest request) {
+                // 先检查URL参数 ?lang=xx
+                String lang = request.getParameter("lang");
+                if (StringUtils.hasText(lang)) {
+                    return Locale.forLanguageTag(lang);
+                }
+                // 设置默认语言为简体中文
+                this.setDefaultLocale(Locale.CHINA);
+                // 返回请求头 Accept-Language 的语言配置
+                return super.resolveLocale(request);
+            }
+        };
     }
 }
