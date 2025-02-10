@@ -26,7 +26,7 @@ enum class SecurityAuthorizationResponseInformation(
     /**
      * 登录已过期
      */
-    LoginHasExpired(HttpStatus.FORBIDDEN.value(), "security.response.login.expired"),
+    LoginHasExpired(HttpStatus.UNAUTHORIZED.value(), "security.response.login.expired"),
 
     /**
      * 无权限访问
