@@ -1,5 +1,6 @@
 package com.gewuyou.baseforge.security.authentication.autoconfigure.config
 
+import com.gewuyou.baseforge.core.extension.log
 import com.gewuyou.baseforge.redis.service.CacheService
 import com.gewuyou.baseforge.security.authentication.autoconfigure.interceptor.DefaultIdempotentLoginRequestInterceptor
 import com.gewuyou.baseforge.security.authentication.autoconfigure.interceptor.IdempotentLoginRequestInterceptor
@@ -22,6 +23,7 @@ class WebConfiguration:WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(IdempotentLoginRequestInterceptor::class)
     fun createIdempotentLoginRequestInterceptor(cacheService: CacheService):IdempotentLoginRequestInterceptor {
+        log.info("创建默认的登录请求幂等拦截器...")
         return DefaultIdempotentLoginRequestInterceptor(cacheService)
     }
 }

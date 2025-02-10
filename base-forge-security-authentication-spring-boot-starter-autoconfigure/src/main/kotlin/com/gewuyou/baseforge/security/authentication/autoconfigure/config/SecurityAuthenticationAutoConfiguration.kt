@@ -54,7 +54,7 @@ class SecurityAuthenticationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(JwtAuthenticationService::class)
     fun createJwtService(jwtTokenProvider: JwtTokenProvider,cacheService: CacheService,jwtProperties: JwtProperties): JwtAuthenticationService {
-        log.info("创建jwt认证服务默认实现...")
+        log.info("创建默认jwt认证服务实现...")
         return JwtAuthenticationServiceImpl(jwtTokenProvider,cacheService,jwtProperties)
     }
 
@@ -64,6 +64,7 @@ class SecurityAuthenticationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(JwtTokenProvider::class)
     fun createJwtTokenProvider(jwtProperties: JwtProperties,cacheService: CacheService):JwtTokenProvider {
+        log.info("创建默认jwt令牌提供程序实现...")
         return DefaultJwtTokenProvider(jwtProperties,cacheService)
     }
 
@@ -92,6 +93,7 @@ class SecurityAuthenticationAutoConfiguration {
         authenticationUserDetailsService: AuthenticationUserDetailsService,
         @Qualifier("i18nMessageSource") i18nMessageSource: MessageSource
     ): AuthenticationSuccessHandler {
+        log.info("创建默认登录成功处理器...")
         return LoginSuccessJsonResponseHandler(
             objectMapper,
             jwtAuthenticationService,
@@ -112,6 +114,7 @@ class SecurityAuthenticationAutoConfiguration {
         objectMapper: ObjectMapper,
         @Qualifier("i18nMessageSource") i18nMessageSource: MessageSource
     ): AuthenticationFailureHandler {
+        log.info("创建登录失败处理器...")
         return LoginFailJsonResponseHandler(objectMapper, i18nMessageSource)
     }
 
@@ -129,10 +132,11 @@ class SecurityAuthenticationAutoConfiguration {
     fun createNormalAuthenticationFilter(
         properties: SecurityAuthenticationProperties,
         authenticationProvider: NormalAuthenticationProvider,
-        authenticationSuccessHandler: AuthenticationSuccessHandler?,
-        authenticationFailureHandler: AuthenticationFailureHandler?,
-        objectMapper: ObjectMapper?
+        authenticationSuccessHandler: AuthenticationSuccessHandler,
+        authenticationFailureHandler: AuthenticationFailureHandler,
+        objectMapper: ObjectMapper
     ): NormalAuthenticationFilter {
+        log.info("创建普通登录认证过滤器...")
         return NormalAuthenticationFilter(
             AntPathRequestMatcher(
                 properties.normalLoginUrl,
@@ -155,6 +159,7 @@ class SecurityAuthenticationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(UserCache::class)
     fun createUserCache(): UserCache {
+        log.info("创建默认用户信息缓存实现...")
         return NullUserCache()
     }
 
@@ -166,6 +171,7 @@ class SecurityAuthenticationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(GrantedAuthoritiesMapper::class)
     fun createGrantedAuthoritiesMapper(): GrantedAuthoritiesMapper {
+        log.info("创建默认用户权限映射器实现...")
         return NullAuthoritiesMapper()
     }
 
@@ -177,6 +183,7 @@ class SecurityAuthenticationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(PasswordEncoder::class)
     fun createPasswordEncoder(): PasswordEncoder {
+        log.info("创建默认的密码加密器 BCryptPasswordEncoder...")
         return BCryptPasswordEncoder()
     }
 
@@ -196,6 +203,7 @@ class SecurityAuthenticationAutoConfiguration {
         passwordEncoder: PasswordEncoder?,
         authenticationUserDetailsService: AuthenticationUserDetailsService?
     ): NormalAuthenticationProvider {
+        log.info("创建默认普通登录认证提供器...")
         return NormalAuthenticationProvider(
             userCache,
             authoritiesMapper,
@@ -216,6 +224,7 @@ class SecurityAuthenticationAutoConfiguration {
         objectMapper: ObjectMapper,
         @Qualifier("i18nMessageSource") i18nMessageSource: MessageSource
     ): AuthenticationEntryPoint {
+        log.info("创建默认认证异常处理器...")
         return AuthenticationExceptionHandler(objectMapper, i18nMessageSource)
     }
 
@@ -233,6 +242,7 @@ class SecurityAuthenticationAutoConfiguration {
         jwtAuthenticationService: JwtAuthenticationService,
         @Qualifier("i18nMessageSource") i18nMessageSource: MessageSource
     ): LogoutSuccessHandler {
+        log.info("创建默认登出成功处理器...")
         return LogoutSuccessJsonResponseHandler(objectMapper, jwtAuthenticationService, i18nMessageSource)
     }
 }
