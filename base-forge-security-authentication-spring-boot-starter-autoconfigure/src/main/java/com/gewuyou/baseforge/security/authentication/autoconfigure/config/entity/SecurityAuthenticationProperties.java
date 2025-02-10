@@ -19,7 +19,7 @@ public class SecurityAuthenticationProperties {
     /**
      * 登录基础地址
      */
-    private String baseLoginUrl = "/auth/login";
+    private String baseLoginUrl = "/auth/c/login";
     /**
      * 普通登录页面地址
      */
