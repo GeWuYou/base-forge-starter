@@ -3,6 +3,7 @@ package com.gewuyou.baseforge.security.authorization.autoconfigure.config
 import com.gewuyou.baseforge.security.authentication.entities.extension.cleanUnNeedConfig
 import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.SecurityAuthorizationProperties
 import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.AuthorizationFilter
+import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.RequestIdFilter
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
@@ -22,12 +23,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @AutoConfigureAfter(SecurityAuthorizationAutoConfiguration::class)
-@ConditionalOnProperty(prefix = "base-forge.security.authorization", name = ["isWebFlux"], havingValue = "false")
+@ConditionalOnProperty(prefix = "base-forge.security.authorization", name = ["is-web-flux"], havingValue = "false")
 class AuthorizationSpringSecurityConfiguration(
     private val dynamicAuthorizationManager: AuthorizationManager<RequestAuthorizationContext>,
     private val jwtAuthorizationFilter: AuthorizationFilter,
     private val authorizationExceptionHandler: AccessDeniedHandler,
-    private val authorizationProperties: SecurityAuthorizationProperties
+    private val authorizationProperties: SecurityAuthorizationProperties,
+    private val requestIdFilter: RequestIdFilter
 ) {
     /**
      * 请求过滤器
@@ -42,9 +44,12 @@ class AuthorizationSpringSecurityConfiguration(
             .logout { it.disable() }
             // 开启授权
             .authorizeHttpRequests {
+                if (authorizationProperties.ignored.isNotEmpty()) {
+                    it
+                        .requestMatchers(*authorizationProperties.ignored)
+                        .permitAll()
+                }
                 it
-                    .requestMatchers(*authorizationProperties.ignored)
-                    .permitAll()
                     .anyRequest()
                     // 所有请求都需要经过授权
                     .access(dynamicAuthorizationManager)
@@ -54,7 +59,8 @@ class AuthorizationSpringSecurityConfiguration(
                 it.accessDeniedHandler(authorizationExceptionHandler)
             }
             .securityMatcher(authorizationProperties.requestUrl)
-            .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(requestIdFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterAfter(jwtAuthorizationFilter, RequestIdFilter::class.java)
             .build()
     }
 }

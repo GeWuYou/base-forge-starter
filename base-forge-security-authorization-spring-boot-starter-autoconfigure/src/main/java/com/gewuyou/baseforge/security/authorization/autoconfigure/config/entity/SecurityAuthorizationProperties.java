@@ -23,7 +23,7 @@ public class SecurityAuthorizationProperties {
     /**
      * 进行鉴权的请求路径
      */
-    private String requestUrl = "/api";
+    private String requestUrl = "/auth/z";
 
     /**
      * 是否使用WebFlux

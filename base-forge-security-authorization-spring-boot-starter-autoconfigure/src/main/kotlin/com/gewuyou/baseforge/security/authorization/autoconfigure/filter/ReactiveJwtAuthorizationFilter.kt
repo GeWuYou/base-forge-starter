@@ -24,22 +24,23 @@ class ReactiveJwtAuthorizationFilter(
 ) : ReactiveAuthorizationFilter {
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         log.info("验证路径：{}", exchange.request.uri.path)
-
-        // 从请求中获取 token，注意需要你为 ServerHttpRequest
-        val token = exchange.request.getAccessToken() ?: run {
-            return Mono.error(AuthorizationException(SecurityAuthorizationResponseInformation.MISSING_ACCESS_TOKENS))
-        }
+        val token = exchange.request.getAccessToken()
+            ?: return Mono.error(AuthorizationException(SecurityAuthorizationResponseInformation.MISSING_ACCESS_TOKENS))
         // 验证token
-        return jwtAuthorizationService.validateToken(token)?.let {
-            // 从token中获取用户信息
-            val userDetails = it.claims[SecurityAuthenticationCommonConstant.USER_DETAILS] as UserDetails
-            log.info("token 验证通过，用户信息：{}", userDetails)
-            // 生成经过认证的 token
-            val auth = NormalAuthenticationToken.authenticated(userDetails, userDetails.authorities)
-            // 将认证信息放入反应式 SecurityContext 中，并继续过滤链
-            chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth))
-        } ?: run {
-            throw AuthorizationException(SecurityAuthorizationResponseInformation.ACCESS_TOKEN_HAS_EXPIRED)
-        }
+        return Mono.justOrEmpty(jwtAuthorizationService.validateToken(token))
+            .switchIfEmpty(Mono.error(AuthorizationException(SecurityAuthorizationResponseInformation.ACCESS_TOKEN_HAS_EXPIRED)))
+            .flatMap { jwtClaims ->
+                // 确保 jwtClaims 不是 null
+                if (jwtClaims == null) {
+                    return@flatMap Mono.error<Void>(AuthorizationException(SecurityAuthorizationResponseInformation.ACCESS_TOKEN_HAS_EXPIRED))
+                }
+                // 从token中获取用户信息
+                val userDetails = jwtClaims.claims[SecurityAuthenticationCommonConstant.USER_DETAILS] as UserDetails
+                log.info("token 验证通过，用户信息：{}", userDetails)
+                // 生成经过认证的 token
+                val auth= NormalAuthenticationToken.authenticated(userDetails, userDetails.authorities)
+                // 将认证信息放入反应式 SecurityContext 中，并继续过滤链
+                chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth))
+            }
     }
 }

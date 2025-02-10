@@ -8,8 +8,10 @@ import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.
 import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.SecurityAuthorizationProperties
 import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.ReactiveAuthorizationFilter
 import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.ReactiveJwtAuthorizationFilter
+import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.ReactiveRequestIdFilter
 import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.ReactiveAuthorizationExceptionHandler
 import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.ReactiveAuthorizationHandler
+import com.gewuyou.baseforge.security.authorization.autoconfigure.handler.ReactiveGlobalExceptionHandler
 import com.gewuyou.baseforge.security.authorization.autoconfigure.manager.ReactiveDynamicAuthorizationManager
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.impl.JwtAuthorizationServiceImpl
@@ -22,9 +24,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.security.authorization.ReactiveAuthorizationManager
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.web.server.authorization.AuthorizationContext
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler
+import org.springframework.web.server.WebExceptionHandler
+import reactor.core.publisher.Mono
 
 /**
  *反应式安全授权自动配置
@@ -35,15 +42,44 @@ import org.springframework.security.web.server.authorization.ServerAccessDeniedH
 @Configuration
 @AutoConfigureBefore(ReactiveAuthorizationSpringSecurityConfiguration::class)
 @EnableConfigurationProperties(SecurityAuthorizationProperties::class, JwtProperties::class)
-@ConditionalOnProperty(prefix = "base-forge.security.authorization", name = ["isWebFlux"], havingValue = "true")
+@ConditionalOnProperty(prefix = "base-forge.security.authorization", name = ["is-web-flux"], havingValue = "true")
 class ReactiveSecurityAuthorizationAutoConfiguration {
+    /**
+    * 反应式安全请求id过滤器
+    */
+    @Bean
+    fun createReactiveRequestIdFilter():ReactiveRequestIdFilter {
+        return ReactiveRequestIdFilter()
+    }
+    /**
+    * 反应式全局异常处理器
+    */
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    fun createReactiveGlobalExceptionHandler(objectMapper: ObjectMapper, i18nMessageSource: MessageSource): WebExceptionHandler {
+        log.info("创建反应式全局异常处理器...")
+        return ReactiveGlobalExceptionHandler(objectMapper, i18nMessageSource)
+    }
+    /**
+    * 反应式用户信息服务
+    */
+    @Bean
+    @ConditionalOnMissingBean(ReactiveUserDetailsService::class)
+    fun createReactiveUserDetailsService():ReactiveUserDetailsService {
+        log.info("创建空的反应式用户信息服务...")
+        // 返回一个空的用户服务，避免默认用户被创建
+        return ReactiveUserDetailsService {
+            // 对于任意查询的用户名，返回一个空的 Mono，表示不存在该用户
+            Mono.empty()
+        }
+    }
     /**
      * 反应式授权异常处理器
      */
     @Bean
     @ConditionalOnMissingBean(ServerAccessDeniedHandler::class)
     fun createAccessDeniedHandler(objectMapper: ObjectMapper, i18nMessageSource: MessageSource): ServerAccessDeniedHandler {
-        log.info("创建授权异常处理器...")
+        log.info("创建默认反应式授权异常处理器...")
         return ReactiveAuthorizationExceptionHandler(objectMapper, i18nMessageSource)
     }
 
@@ -64,7 +100,7 @@ class ReactiveSecurityAuthorizationAutoConfiguration {
     fun createReactiveAuthorizationManager(
         reactiveAuthorizationHandler: ReactiveAuthorizationHandler
     ):ReactiveAuthorizationManager<AuthorizationContext> {
-        log.info("创建动态授权管理器...")
+        log.info("创建默认反应式动态授权管理器...")
         return ReactiveDynamicAuthorizationManager(reactiveAuthorizationHandler)
     }
 
@@ -88,7 +124,7 @@ class ReactiveSecurityAuthorizationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ReactiveAuthorizationFilter::class)
     fun createReactiveJwtAuthorizationFilter(jwtAuthorizationService: JwtAuthorizationService):ReactiveAuthorizationFilter {
-        log.info("创建授权过滤器...")
+        log.info("创建反应式授权过滤器...")
         return ReactiveJwtAuthorizationFilter(jwtAuthorizationService)
     }
 
