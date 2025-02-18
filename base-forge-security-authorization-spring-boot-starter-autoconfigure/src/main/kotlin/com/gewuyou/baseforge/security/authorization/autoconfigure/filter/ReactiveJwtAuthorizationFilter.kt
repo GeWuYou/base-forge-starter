@@ -3,7 +3,7 @@ package com.gewuyou.baseforge.security.authorization.autoconfigure.filter
 import com.gewuyou.baseforge.core.constants.SecurityAuthenticationCommonConstant
 import com.gewuyou.baseforge.core.extension.getAccessToken
 import com.gewuyou.baseforge.core.extension.log
-import com.gewuyou.baseforge.security.authentication.entities.token.NormalAuthenticationToken
+import com.gewuyou.baseforge.security.authentication.entities.token.PrincipalCredentialsAuthenticationToken
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
 import com.gewuyou.baseforge.security.authorization.entities.exception.AuthorizationException
 import com.gewuyou.baseforge.security.authorization.entities.i18n.enums.SecurityAuthorizationResponseInformation
@@ -38,7 +38,7 @@ class ReactiveJwtAuthorizationFilter(
                 val userDetails = jwtClaims.claims[SecurityAuthenticationCommonConstant.USER_DETAILS] as UserDetails
                 log.info("token 验证通过，用户信息：{}", userDetails)
                 // 生成经过认证的 token
-                val auth= NormalAuthenticationToken.authenticated(userDetails, userDetails.authorities)
+                val auth= PrincipalCredentialsAuthenticationToken.authenticated(userDetails,null, userDetails.authorities)
                 // 将认证信息放入反应式 SecurityContext 中，并继续过滤链
                 chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth))
             }

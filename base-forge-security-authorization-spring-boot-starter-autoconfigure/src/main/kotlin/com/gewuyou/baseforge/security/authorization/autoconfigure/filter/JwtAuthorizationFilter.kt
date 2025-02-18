@@ -3,7 +3,7 @@ package com.gewuyou.baseforge.security.authorization.autoconfigure.filter
 import com.gewuyou.baseforge.core.constants.SecurityAuthenticationCommonConstant
 import com.gewuyou.baseforge.core.extension.getAccessToken
 import com.gewuyou.baseforge.core.extension.log
-import com.gewuyou.baseforge.security.authentication.entities.token.NormalAuthenticationToken
+import com.gewuyou.baseforge.security.authentication.entities.token.PrincipalCredentialsAuthenticationToken
 import com.gewuyou.baseforge.security.authorization.autoconfigure.service.JwtAuthorizationService
 import com.gewuyou.baseforge.security.authorization.entities.exception.AuthorizationException
 import com.gewuyou.baseforge.security.authorization.entities.i18n.enums.SecurityAuthorizationResponseInformation
@@ -43,7 +43,7 @@ class JwtAuthorizationFilter(
                 request.setAttribute(SecurityAuthenticationCommonConstant.USER_DETAILS, userDetails)
                 // 生成token并将用户信息放入security context中
                 SecurityContextHolder.getContext().authentication =
-                    NormalAuthenticationToken.authenticated(userDetails,userDetails.authorities)
+                   PrincipalCredentialsAuthenticationToken.authenticated(userDetails,null,userDetails.authorities)
                 log.info("token 验证通过，放行")
                 filterChain.doFilter(request, response)
             } ?: run {
