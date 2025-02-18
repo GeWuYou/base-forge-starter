@@ -46,7 +46,7 @@ def configurePublishing(String name, String groupId, String artifactId, String v
                             'inceptionYear': '2024',
                             'artifactId': artifactId,
                             'groupId': groupId,
-                            'projectUrl': 'https://github.com/gewuwo/base-forge-starter',
+                            'projectUrl': 'https://github.com/gewuyou/base-forge-starter',
                     ]
                     licenses {
                         license {
