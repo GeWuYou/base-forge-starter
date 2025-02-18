@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 /**
  * 安全性身份验证属性
  *
@@ -17,15 +19,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("base-forge.security.authentication")
 public class SecurityAuthenticationProperties {
     /**
-     * 登录基础地址
+     * 基础地址
      */
-    private String baseLoginUrl = "/auth/c/login";
+    private String baseUrl = "/auth/c";
     /**
-     * 普通登录页面地址
+     * 登录地址
      */
-    private String normalLoginUrl = "/normal";
+    private String loginUrl = "/login";
     /**
-     * 登出页面地址
+     * 登出地址
      */
     private String logoutUrl = "/logout";
+    /**
+     * 登录策略
+     */
+    private List<String> loginStrategies = List.of("username");
 }

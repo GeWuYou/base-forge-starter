@@ -51,7 +51,7 @@ class AuthenticationSpringSecurityConfiguration(
                 exceptionHandling
                     .authenticationEntryPoint(authenticationExceptionHandler)
             }
-            .securityMatcher(securityProperties.baseLoginUrl)
+            .securityMatcher(securityProperties.baseUrl)
             .authorizeHttpRequests {
                 it
                     .anyRequest()

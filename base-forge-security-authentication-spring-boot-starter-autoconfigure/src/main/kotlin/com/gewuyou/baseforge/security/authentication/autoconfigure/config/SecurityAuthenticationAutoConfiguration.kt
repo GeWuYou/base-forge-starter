@@ -7,29 +7,36 @@ import com.gewuyou.baseforge.jwt.generation.autoconfigure.provider.JwtTokenProvi
 import com.gewuyou.baseforge.redis.service.CacheService
 import com.gewuyou.baseforge.security.authentication.autoconfigure.config.entity.JwtProperties
 import com.gewuyou.baseforge.security.authentication.autoconfigure.config.entity.SecurityAuthenticationProperties
-import com.gewuyou.baseforge.security.authentication.autoconfigure.filter.NormalAuthenticationFilter
+import com.gewuyou.baseforge.security.authentication.autoconfigure.context.LoginRequestConverterContext
+import com.gewuyou.baseforge.security.authentication.autoconfigure.factory.LoginRequestParserFactory
+import com.gewuyou.baseforge.security.authentication.autoconfigure.filter.DefaultAuthenticationFilter
 import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.AuthenticationExceptionHandler
 import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.LoginFailJsonResponseHandler
 import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.LoginSuccessJsonResponseHandler
 import com.gewuyou.baseforge.security.authentication.autoconfigure.handler.LogoutSuccessJsonResponseHandler
+import com.gewuyou.baseforge.security.authentication.autoconfigure.parser.FormLoginRequestParser
+import com.gewuyou.baseforge.security.authentication.autoconfigure.parser.JsonLoginRequestParser
+import com.gewuyou.baseforge.security.authentication.autoconfigure.provider.AbstractPrincipalPasswordAuthenticationProvider
 import com.gewuyou.baseforge.security.authentication.autoconfigure.provider.DefaultJwtTokenProvider
-import com.gewuyou.baseforge.security.authentication.autoconfigure.provider.NormalAuthenticationProvider
-import com.gewuyou.baseforge.security.authentication.autoconfigure.service.AuthenticationUserDetailsService
+import com.gewuyou.baseforge.security.authentication.autoconfigure.provider.UsernamePasswordAuthenticationProvider
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.JwtAuthenticationService
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.UserCacheService
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.UserDetailsService
 import com.gewuyou.baseforge.security.authentication.autoconfigure.service.impl.JwtAuthenticationServiceImpl
+import com.gewuyou.baseforge.security.authentication.autoconfigure.service.impl.NullUserCacheService
+import com.gewuyou.baseforge.security.authentication.autoconfigure.strategy.UsernamePasswordLoginRequestConverterStrategy
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.ApplicationContext
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper
-import org.springframework.security.core.userdetails.UserCache
-import org.springframework.security.core.userdetails.cache.NullUserCache
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.AuthenticationEntryPoint
@@ -45,27 +52,81 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
  * @since 2025-01-03 10:17:19
  */
 @Configuration
-@EnableConfigurationProperties(SecurityAuthenticationProperties::class,JwtProperties::class)
+@EnableConfigurationProperties(SecurityAuthenticationProperties::class, JwtProperties::class)
 class SecurityAuthenticationAutoConfiguration {
+    /**
+     * 表单登录请求解析器
+     */
+    @Bean
+    @ConditionalOnMissingBean(FormLoginRequestParser::class)
+    fun createFromLoginRequestParser(): FormLoginRequestParser {
+        log.info("创建默认表单登录请求解析器...")
+        return FormLoginRequestParser()
+    }
+
+    /**
+     * json登录请求解析器
+     */
+    @Bean
+    @ConditionalOnMissingBean(JsonLoginRequestParser::class)
+    fun createJsonLoginRequestParser(objectMapper: ObjectMapper): JsonLoginRequestParser {
+        log.info("创建默认json登录请求解析器...")
+        return JsonLoginRequestParser(objectMapper)
+    }
+
+    /**
+     * 用户名密码登录请求转换器
+     */
+    @Bean
+    @ConditionalOnMissingBean(UsernamePasswordLoginRequestConverterStrategy::class)
+    fun createUsernamePasswordLoginRequestConverterStrategy(): UsernamePasswordLoginRequestConverterStrategy {
+        log.info("创建默认用户名密码登录请求转换器...")
+        return UsernamePasswordLoginRequestConverterStrategy()
+    }
+
+    /**
+     * 登录请求解析器工厂
+     */
+    @Bean
+    @ConditionalOnMissingBean(LoginRequestParserFactory::class)
+    fun createLoginRequestParserFactory(applicationContext: ApplicationContext): LoginRequestParserFactory {
+        log.info("创建默认登录请求解析器工厂...")
+        return LoginRequestParserFactory(applicationContext)
+    }
+
+    /**
+     * 登录请求转换策略上下文
+     */
+    @Bean
+    @ConditionalOnMissingBean(LoginRequestConverterContext::class)
+    fun createLoginRequestConverterContext(applicationContext: ApplicationContext): LoginRequestConverterContext {
+        log.info("创建默认登录请求转换策略上下文...")
+        return LoginRequestConverterContext(applicationContext)
+    }
+
     /**
      * jwt服务类
      *
      */
     @Bean
     @ConditionalOnMissingBean(JwtAuthenticationService::class)
-    fun createJwtService(jwtTokenProvider: JwtTokenProvider,cacheService: CacheService,jwtProperties: JwtProperties): JwtAuthenticationService {
+    fun createJwtService(
+        jwtTokenProvider: JwtTokenProvider,
+        cacheService: CacheService,
+        jwtProperties: JwtProperties
+    ): JwtAuthenticationService {
         log.info("创建默认jwt认证服务实现...")
-        return JwtAuthenticationServiceImpl(jwtTokenProvider,cacheService,jwtProperties)
+        return JwtAuthenticationServiceImpl(jwtTokenProvider, cacheService, jwtProperties)
     }
 
     /**
-    * Jwt令牌提供程序
-    */
+     * Jwt令牌提供程序
+     */
     @Bean
     @ConditionalOnMissingBean(JwtTokenProvider::class)
-    fun createJwtTokenProvider(jwtProperties: JwtProperties,cacheService: CacheService):JwtTokenProvider {
+    fun createJwtTokenProvider(jwtProperties: JwtProperties, cacheService: CacheService): JwtTokenProvider {
         log.info("创建默认jwt令牌提供程序实现...")
-        return DefaultJwtTokenProvider(jwtProperties,cacheService)
+        return DefaultJwtTokenProvider(jwtProperties, cacheService)
     }
 
     /**
@@ -73,10 +134,10 @@ class SecurityAuthenticationAutoConfiguration {
      *
      * @throws InternalException 内部异常
      */
-    @Bean
-    @ConditionalOnMissingBean(AuthenticationUserDetailsService::class)
-    fun createUserDetailsService(): AuthenticationUserDetailsService {
-        throw InternalException("请实现UserDetailsService接口用于提供用户信息服务!")
+    @Bean("userDetailsService")
+    @ConditionalOnMissingBean(UserDetailsService::class)
+    fun createUserDetailsService(): UserDetailsService {
+        throw InternalException("请实现bean名称为userDetailsService的UserDetailsService接口用于提供基本的用户名密码验证服务!")
     }
 
     /**
@@ -90,14 +151,12 @@ class SecurityAuthenticationAutoConfiguration {
     fun createLoginSuccessHandler(
         objectMapper: ObjectMapper,
         jwtAuthenticationService: JwtAuthenticationService,
-        authenticationUserDetailsService: AuthenticationUserDetailsService,
         @Qualifier("i18nMessageSource") i18nMessageSource: MessageSource
     ): AuthenticationSuccessHandler {
         log.info("创建默认登录成功处理器...")
         return LoginSuccessJsonResponseHandler(
             objectMapper,
             jwtAuthenticationService,
-            authenticationUserDetailsService,
             i18nMessageSource
         )
     }
@@ -119,35 +178,40 @@ class SecurityAuthenticationAutoConfiguration {
     }
 
     /**
-     * 创建普通登录认证过滤器 用于处理普通登录请求
+     * 创建登录认证过滤器 用于处理默认的用户名密码登录请求
      *
      * @param properties                   安全认证配置
-     * @param authenticationProvider       认证提供器
+     * @param authenticationProviders       认证提供器
      * @param authenticationSuccessHandler 认证成功处理器
      * @param authenticationFailureHandler 认证失败处理器
      * @param objectMapper                 json对象映射器
-     * @return 普通登录认证过滤器
+     * @return 登录认证过滤器
      */
-    @Bean("normalAuthenticationFilter")
-    fun createNormalAuthenticationFilter(
+    @Bean("defaultAuthenticationFilter")
+    @ConditionalOnMissingBean(DefaultAuthenticationFilter::class)
+    fun createDefaultAuthenticationFilter(
         properties: SecurityAuthenticationProperties,
-        authenticationProvider: NormalAuthenticationProvider,
+        authenticationProviders: List<AbstractPrincipalPasswordAuthenticationProvider>,
         authenticationSuccessHandler: AuthenticationSuccessHandler,
         authenticationFailureHandler: AuthenticationFailureHandler,
-        objectMapper: ObjectMapper
-    ): NormalAuthenticationFilter {
-        log.info("创建普通登录认证过滤器...")
-        return NormalAuthenticationFilter(
+        objectMapper: ObjectMapper,
+        loginRequestParserFactory: LoginRequestParserFactory,
+        loginRequestConverterContext: LoginRequestConverterContext
+    ): DefaultAuthenticationFilter {
+        log.info("创建默认登录认证过滤器...")
+        return DefaultAuthenticationFilter(
             AntPathRequestMatcher(
-                properties.normalLoginUrl,
+                properties.loginUrl,
                 HttpMethod.POST.name()
             ),
             ProviderManager(
-                listOf<AuthenticationProvider>(authenticationProvider)
+                authenticationProviders
             ),
             authenticationSuccessHandler,
             authenticationFailureHandler,
-            objectMapper
+            objectMapper,
+            loginRequestParserFactory,
+            loginRequestConverterContext
         )
     }
 
@@ -157,10 +221,10 @@ class SecurityAuthenticationAutoConfiguration {
      * @return 用户信息缓存
      */
     @Bean
-    @ConditionalOnMissingBean(UserCache::class)
-    fun createUserCache(): UserCache {
+    @ConditionalOnMissingBean(UserCacheService::class)
+    fun createUserCache(): UserCacheService {
         log.info("创建默认用户信息缓存实现...")
-        return NullUserCache()
+        return NullUserCacheService()
     }
 
     /**
@@ -188,27 +252,28 @@ class SecurityAuthenticationAutoConfiguration {
     }
 
     /**
-     * 普通登录认证提供器
+     * 用户名密码登录认证提供器
      *
-     * @param userCache                        用户信息缓存
+     * @param userCacheService                        用户信息缓存服务
      * @param authoritiesMapper                权限映射器
      * @param passwordEncoder                  密码加密器
-     * @param authenticationUserDetailsService 用户信息服务
-     * @return 普通登录认证提供器
+     * @param userDetailsService 用户信息服务
+     * @return 用户名密码登录认证提供器
      */
     @Bean
-    fun createNormalAuthenticationProvider(
-        userCache: UserCache?,
-        authoritiesMapper: GrantedAuthoritiesMapper?,
-        passwordEncoder: PasswordEncoder?,
-        authenticationUserDetailsService: AuthenticationUserDetailsService?
-    ): NormalAuthenticationProvider {
-        log.info("创建默认普通登录认证提供器...")
-        return NormalAuthenticationProvider(
-            userCache,
+    fun createUsernamePasswordAuthenticationProvider(
+        userCacheService: UserCacheService,
+        authoritiesMapper: GrantedAuthoritiesMapper,
+        passwordEncoder: PasswordEncoder,
+        @Qualifier("userDetailsService")
+        userDetailsService: UserDetailsService
+    ): UsernamePasswordAuthenticationProvider {
+        log.info("创建默认用户名密码登录认证提供器...")
+        return UsernamePasswordAuthenticationProvider(
+            userCacheService,
             authoritiesMapper,
             passwordEncoder,
-            authenticationUserDetailsService
+            userDetailsService
         )
     }
 
