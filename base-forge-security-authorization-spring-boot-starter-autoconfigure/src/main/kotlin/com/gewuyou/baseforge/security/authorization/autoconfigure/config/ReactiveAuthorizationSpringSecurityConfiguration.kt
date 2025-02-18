@@ -1,5 +1,6 @@
 package com.gewuyou.baseforge.security.authorization.autoconfigure.config
 
+import com.gewuyou.baseforge.autoconfigure.i18n.filter.ReactiveLocaleResolver
 import com.gewuyou.baseforge.security.authentication.entities.extension.cleanUnNeedConfig
 import com.gewuyou.baseforge.security.authorization.autoconfigure.config.entity.SecurityAuthorizationProperties
 import com.gewuyou.baseforge.security.authorization.autoconfigure.filter.ReactiveAuthorizationFilter
@@ -32,7 +33,8 @@ class ReactiveAuthorizationSpringSecurityConfiguration(
     private val reactiveAuthorizationManager: ReactiveAuthorizationManager<AuthorizationContext>,
     private val reactiveAccessDeniedHandler: ServerAccessDeniedHandler,
     private val reactiveJwtAuthorizationFilter: ReactiveAuthorizationFilter,
-    private val reactiveRequestIdFilter: ReactiveRequestIdFilter
+    private val reactiveRequestIdFilter: ReactiveRequestIdFilter,
+    private val reactiveLocaleResolver: ReactiveLocaleResolver
 ) {
     /**
      * 请求过滤器
@@ -63,6 +65,8 @@ class ReactiveAuthorizationSpringSecurityConfiguration(
             )
             // ✅ 在 `SecurityWebFiltersOrder.FIRST` 之前添加请求 ID 过滤器
             .addFilterAt(reactiveRequestIdFilter, SecurityWebFiltersOrder.FIRST)
+            // ✅ 在 `SecurityWebFiltersOrder.FIRST` 之前添加反应式语言解析器
+            .addFilterAt(reactiveLocaleResolver, SecurityWebFiltersOrder.FIRST)
             // ✅ 在 `SecurityWebFiltersOrder.AUTHENTICATION` 之前添加 JWT 过滤器
             .addFilterAt(reactiveJwtAuthorizationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
             .build()
