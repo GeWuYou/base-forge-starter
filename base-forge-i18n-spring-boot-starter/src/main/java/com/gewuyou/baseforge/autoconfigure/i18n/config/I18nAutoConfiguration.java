@@ -1,9 +1,13 @@
 package com.gewuyou.baseforge.autoconfigure.i18n.config;
 
+import com.gewuyou.baseforge.autoconfigure.i18n.config.entity.I18nProperties;
+import com.gewuyou.baseforge.autoconfigure.i18n.filter.ReactiveLocaleResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +17,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,9 +31,11 @@ import java.util.Locale;
  * @since 2024-11-11 00:46:01
  */
 @Configuration
+@EnableConfigurationProperties({I18nProperties.class})
 @Slf4j
 public class I18nAutoConfiguration {
     public static final String MESSAGE_SOURCE_BEAN_NAME = "i18nMessageSource";
+    public static final String BASE_NAME_PREFIX = "base-forge.i18n";
 
     @Bean(name = MESSAGE_SOURCE_BEAN_NAME)
     @ConditionalOnMissingBean(name = MESSAGE_SOURCE_BEAN_NAME)
@@ -67,21 +74,40 @@ public class I18nAutoConfiguration {
     }
 
     @Bean
-    public LocaleResolver localeResolver() {
+    @ConditionalOnProperty(prefix = BASE_NAME_PREFIX, name = "is-web-flux", havingValue = "false")
+    public LocaleResolver localeResolver(I18nProperties i18nProperties) {
         return new AcceptHeaderLocaleResolver() {
             @NotNull
             @Override
             public Locale resolveLocale(@NotNull HttpServletRequest request) {
+                log.info("开始解析URL参数 lang 语言配置...");
                 // 先检查URL参数 ?lang=xx
-                String lang = request.getParameter("lang");
+                String lang = request.getParameter(i18nProperties.getLangRequestParameter());
                 if (StringUtils.hasText(lang)) {
                     return Locale.forLanguageTag(lang);
                 }
                 // 设置默认语言为简体中文
-                this.setDefaultLocale(Locale.CHINA);
+                this.setDefaultLocale(Locale.forLanguageTag(i18nProperties.getDefaultLocale()));
                 // 返回请求头 Accept-Language 的语言配置
                 return super.resolveLocale(request);
             }
         };
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = BASE_NAME_PREFIX, name = "is-web-flux", havingValue = "false")
+    public LocaleChangeInterceptor localeChangeInterceptor(I18nProperties i18nProperties) {
+        log.info("创建区域设置更改拦截器...");
+        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+        // 设置 URL 参数名，例如 ?lang=en 或 ?lang=zh
+        interceptor.setParamName(i18nProperties.getLangRequestParameter());
+        return interceptor;
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = BASE_NAME_PREFIX, name = "is-web-flux", havingValue = "true")
+    public ReactiveLocaleResolver createReactiveLocaleResolver(I18nProperties i18nProperties) {
+        log.info("创建 WebFlux 区域设置解析器...");
+        return new ReactiveLocaleResolver(i18nProperties);
     }
 }
