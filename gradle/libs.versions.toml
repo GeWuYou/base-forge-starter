@@ -1,0 +1,154 @@
+[versions]
+protoc-version = "3.25.5"
+spring-cloud-version = "2024.0.1"
+spring-boot-version = "3.4.4"
+spring-dependency-management-version = "1.1.6"
+lombok-version = "1.18.34"
+grpc-version = "1.69.0"
+protobuf-version = "3.25.5"
+protobuf-plugin-version = "0.9.4"
+grpc-spring-boot-starter-version = "3.1.0.RELEASE"
+tomcat-version = "6.0.53"
+mybatis-plus-version = "3.5.8"
+spring-doc-version = "2.6.0"
+commons-lang3-version = "3.17.0"
+redisson-version = "3.37.0"
+easy-es-version = "1.1.1"
+jjwt-version = "0.12.6"
+kotlin-version = "2.1.0"
+kotlinx-version = "1.10.1"
+postgresql-version = "42.7.4"
+tools-jib-gradle-plugin-version = "3.4.2"
+userAgentUtils-version = "1.21"
+[plugins]
+# 应用 Gradle 基础插件，提供项目的基础配置和插件管理能力
+java-gradle-plugin = { id = "java-gradle-plugin" }
+# 应用 Java 插件，提供基本的 Java 代码编译和构建能力
+java = { id = "java" }
+
+# 应用 Java Library 插件，支持库开发，提供 API 和实现分离的能力
+java-library = { id = "java-library" }
+
+# 应用 Maven 发布插件，支持项目的构建产物发布到 Maven 仓库
+maven-publish = { id = "maven-publish" }
+
+# 应用 Spring Boot 插件，提供 Spring Boot 应用的开发和运行能力
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot-version" }
+
+# Spring 依赖管理插件，简化依赖版本管理
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management-version" }
+
+# 应用 Protobuf 插件，提供 Protobuf 文件的编译和生成能力
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin-version" }
+
+# 引入 Kotlin 支持
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
+
+# 支持 Spring 的 Kotlin 插件
+kotlin-plugin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin-version" }
+
+# 让 Kotlin 支持访问 Java 的 Lombok 注解
+kotlin-plugin-lombok = { id = "org.jetbrains.kotlin.plugin.lombok", version.ref = "kotlin-version" }
+
+# 支持 Kotlin JPA 插件
+kotlin-plugin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin-version" }
+
+[libraries]
+userAgentUtils = { module = "eu.bitwalker:UserAgentUtils", version.ref = "userAgentUtils-version" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3-version" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok-version" }
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-doc-version" }
+redisson = { module = "org.redisson:redisson-spring-boot-starter", version.ref = "redisson-version" }
+easy-es = { module = "cn.easy-es:easy-es-boot-starter", version.ref = "easy-es-version" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-version" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql-version" }
+tomcat-annotations-api = { module = "org.apache.tomcat:annotations-api", version.ref = "tomcat-version" }
+grpc-server = { module = "net.devh:grpc-server-spring-boot-starter", version.ref = "grpc-spring-boot-starter-version" }
+grpc-client = { module = "net.devh:grpc-client-spring-boot-starter", version.ref = "grpc-spring-boot-starter-version" }
+mybatis-plus-generator = { module = "com.baomidou:mybatis-plus-generator", version.ref = "mybatis-plus-version" }
+mybatis-plus-spring-boot3-starter = { module = "com.baomidou:mybatis-plus-spring-boot3-starter", version.ref = "mybatis-plus-version" }
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt-version" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt-version" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt-version" }
+springBootStarter-grpc-client = { group = "net.devh", name = "grpc-client-spring-boot-starter", version.ref = "grpc-spring-boot-starter-version" }
+springBootStarter-grpc-server = { group = "net.devh", name = "grpc-server-spring-boot-starter", version.ref = "grpc-spring-boot-starter-version" }
+comGoogleCloud-tools-jib-gradle-plugin = { module="com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin", version.ref = "tools-jib-gradle-plugin-version" }
+springBoot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor", version.ref = "spring-boot-version" }
+# Bom
+grpc-bom = { module = "io.grpc:grpc-bom", version.ref = "grpc-version" }
+kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin-version" }
+protobuf-bom = { module = "com.google.protobuf:protobuf-bom", version.ref = "protobuf-version" }
+springCloudDependencies-bom = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring-cloud-version" }
+springBootDependencies-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot-version" }
+
+# bom dependenciess
+springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter" }
+springBootStarter-mail = { group = "org.springframework.boot", name = "spring-boot-starter-mail" }
+springBootStarter-quartz = { group = "org.springframework.boot", name = "spring-boot-starter-quartz" }
+springBootStarter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+springBootStarter-data-redis = { group = "org.springframework.boot", name = "spring-boot-starter-data-redis" }
+springBootStarter-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator" }
+springBootStarter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
+springBootStarter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+springBootStarter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }
+springBootStarter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
+springBootStarter-aop = { group = "org.springframework.boot", name = "spring-boot-starter-aop" }
+springBootStarter-thymeleaf = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf" }
+springBootStarter-freemarker = { group = "org.springframework.boot", name = "spring-boot-starter-freemarker" }
+springBootStarter-amqp = { group = "org.springframework.boot", name = "spring-boot-starter-amqp" }
+springCloudStarter-gateway = { group = "org.springframework.cloud", name = "spring-cloud-starter-gateway" }
+springCloudStarter-config = { group = "org.springframework.cloud", name = "spring-cloud-starter-config" }
+springCloudStarter-eureka = { group = "org.springframework.cloud", name = "spring-cloud-starter-eureka" }
+springCloudStarter-config-server = { group = "org.springframework.cloud", name = "spring-cloud-config-server" }
+springCloudStarter-netflix-eureka-server = { group = "org.springframework.cloud", name = "spring-cloud-starter-netflix-eureka-server" }
+springCloudStarter-bus-amqp = { group = "org.springframework.cloud", name = "spring-cloud-starter-bus-amqp" }
+springCloudStarter-netflix-eureka-client = { group = "org.springframework.cloud", name = "spring-cloud-starter-netflix-eureka-client" }
+springCloudStarter-openfeign = { group = "org.springframework.cloud", name = "spring-cloud-starter-openfeign" }
+springRabbit-test = { group = "org.springframework.amqp", name = "spring-rabbit-test" }
+grpc-netty = { group = "io.grpc", name = "grpc-netty" }
+grpc-protobuf = { group = "io.grpc", name = "grpc-protobuf" }
+grpc-stub = { group = "io.grpc", name = "grpc-stub" }
+grpc-services = { group = "io.grpc", name = "grpc-services" }
+grpc-netty-shaded = { group = "io.grpc", name = "grpc-netty-shaded" }
+
+json-core={group="com.fasterxml.jackson.core", name="jackson-core"}
+json-databind={group="com.fasterxml.jackson.core", name="jackson-databind"}
+json-annotations={group="com.fasterxml.jackson.core", name="jackson-annotations"}
+json-datatype-jsr310={group="com.fasterxml.jackson.datatype", name="jackson-datatype-jsr310"}
+json-module-kotlin={group="com.fasterxml.jackson.module", name="jackson-module-kotlin"}
+reactor-core={group="io.projectreactor", name="reactor-core"}
+
+annotations-api = { group = "org.apache.tomcat", name = "tomcat-annotations-api" }
+
+protobuf-java = { group = "com.google.protobuf", name = "protobuf-java" }
+protobuf-java-util = { group = "com.google.protobuf", name = "protobuf-java-util" }
+
+
+
+
+#设置依赖组
+[bundles]
+springCloudStarter-configClient = [
+    "springCloudStarter-config", "springCloudStarter-bus-amqp"
+]
+grpcBase = [
+    "grpc-netty", "grpc-protobuf", "grpc-stub", "annotations-api"
+]
+grpcClient = [
+    "grpc-netty-shaded", "grpc-netty", "grpc-protobuf",
+    "grpc-stub", "grpc-services", "annotations-api",
+    "springBootStarter-grpc-client", "protobuf-java",
+    "protobuf-java-util"
+]
+grpcServer = [
+    "grpc-netty-shaded", "grpc-netty", "grpc-protobuf",
+    "grpc-stub", "grpc-services", "annotations-api",
+    "springBootStarter-grpc-server", "protobuf-java",
+    "protobuf-java-util"
+]
+jacksonAll = [
+   "json-core", "json-databind", "json-annotations","json-datatype-jsr310", "json-module-kotlin"
+]
+jjwtAll = [
+    "jjwt-api", "jjwt-impl", "jjwt-jackson"
+]

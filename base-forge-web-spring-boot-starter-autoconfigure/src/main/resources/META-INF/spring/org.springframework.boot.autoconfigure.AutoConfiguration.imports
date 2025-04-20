@@ -1,0 +1,2 @@
+com.gewuyou.baseforge.autoconfigure.web.config.WebMvcConfiguration
+com.gewuyou.baseforge.autoconfigure.web.config.WebAutoConfiguration

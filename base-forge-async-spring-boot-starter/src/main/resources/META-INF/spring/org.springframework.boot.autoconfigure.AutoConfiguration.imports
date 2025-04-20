@@ -1,0 +1,2 @@
+com.gewuyou.baseforge.autoconfigure.async.config.AsyncTaskExecutorAutoConfiguration
+com.gewuyou.baseforge.autoconfigure.async.config.CoroutineDispatcherAutoConfiguration

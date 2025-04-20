@@ -1,0 +1,3 @@
+com.gewuyou.baseforge.security.authentication.autoconfigure.config.WebConfiguration
+com.gewuyou.baseforge.security.authentication.autoconfigure.config.SecurityAuthenticationAutoConfiguration
+com.gewuyou.baseforge.security.authentication.autoconfigure.config.AuthenticationSpringSecurityConfiguration

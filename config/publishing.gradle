@@ -1,0 +1,127 @@
+// This file is used to configure the publishing of the project.
+publishing {
+    repositories {
+        maven {
+            name = 'localRepo'
+            url = "file://D:/Maven/mvn_repository"
+        }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/GeWuYou/base-forge-starter")
+            credentials {
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+/**
+ * 配置发布信息
+ * @param name 发布器名称
+ * @param groupId 组id
+ * @param artifactId 项目id
+ * @param version 版本号
+ * @return 发布配置
+ */
+def configurePublishing(PublishProject project) {
+    publishing {
+        publications {
+            create(project.name, MavenPublication) {
+                it.groupId = project.groupId
+                it.artifactId = project.artifactId
+                it.version = project.version
+                from components.java
+                // 定义版本映射
+                versionMapping {
+                    usage('java-api') {
+                        // 指示Gradle在解析下游依赖项时，从runtimeClasspath的解析结果中获取对应版本
+                        fromResolutionOf('runtimeClasspath')
+                    }
+
+                    usage('java-runtime') {
+                        // 指示在运行时收集版本信息，适用于运行时环境中的依赖项。
+                        fromResolutionResult()
+                    }
+                }
+                // 如果需要将源代码包添加到发布中，可以添加如下代码 sourceTask 来自自定义任务
+                artifact sourceTask
+                // 配置POM文件
+                pom {
+                    it.name = project.artifactId
+                    description = 'a starter project for Spring Boot'
+                    url = ''
+                    properties = [
+                            'inceptionYear': '2024',
+                            'artifactId': project.artifactId,
+                            'groupId': project.groupId,
+                            'projectUrl': project.getProjectUrl(),
+                    ]
+                    licenses {
+                        license {
+                            it.name = 'The MIT License'
+                            url = 'http://www.opensource.org/licenses/mit-license.php'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'gewuyou'
+                            it.name = 'gewuyou'
+                            email = 'gewuyou1024@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/gewuyou/base-forge-starter.git'
+                        developerConnection = 'scm:git:ssh://github.com/gewuyou/base-forge-starter.git'
+                        url = 'http://github.com/gewuyou/base-forge-starter/'
+                    }
+                }
+            }
+        }
+    }
+}
+
+List.of(
+        new PublishProject("async", "base-forge-async-spring-boot-starter", "1.0.0"),
+        new PublishProject("core", "base-forge-core-spring-boot-starter", "1.0.0"),
+        new PublishProject("grpc", "base-forge-grpc-spring-boot-starter", "1.0.0"),
+        new PublishProject("i18n", "base-forge-i18n-spring-boot-starter", "1.0.4"),
+        new PublishProject("json", "base-forge-json-spring-boot-starter", "1.0.1"),
+        new PublishProject("jwt", "base-forge-jwt-spring-boot-starter", "1.0.0"),
+        new PublishProject("log", "base-forge-log-spring-boot-starter", "1.0.0"),
+        new PublishProject("logAutoconfigure", "base-forge-log-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("mybatisExtension", "base-forge-mybatis-extension-spring-boot-starter", "1.0.0"),
+        new PublishProject("redis", "base-forge-redis-spring-boot-starter", "1.0.1"),
+        new PublishProject("securityAuthentication", "base-forge-security-authentication-spring-boot-starter", "1.0.0"),
+        new PublishProject("securityAuthenticationAutoconfigure", "base-forge-security-authentication-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("securityAuthorization", "base-forge-security-authorization-spring-boot-starter", "1.0.0"),
+        new PublishProject("securityAuthorizationAutoconfigure", "base-forge-security-authorization-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("util", "base-forge-util-spring-boot-starter", "1.0.1"),
+        new PublishProject("web", "base-forge-web-spring-boot-starter", "1.0.0"),
+        new PublishProject("webAutoconfigure", "base-forge-web-spring-boot-starter-autoconfigure", "1.0.0"),
+        new PublishProject("requestTrace", "base-forge-request-trace-spring-boot-starter", "1.0.0")
+)
+        .stream()
+        .filter { (project.name == it.artifactId) }
+        .forEach { project ->
+            configurePublishing(project)
+        }
+// 发布项目配置
+/**
+ * 发布项目配置类
+ */
+class PublishProject {
+    String name
+    String groupId = "com.gewuyou"
+    String artifactId
+    String version
+
+    PublishProject(String name, String artifactId, String version) {
+        this.name = name
+        this.artifactId = artifactId
+        this.version = version
+    }
+    String getProjectUrl() {
+        return "https://github.com/gewuyou/base-forge-starter/" + artifactId
+    }
+
+}
