@@ -15,19 +15,19 @@ commons-lang3-version = "3.17.0"
 redisson-version = "3.37.0"
 easy-es-version = "1.1.1"
 jjwt-version = "0.12.6"
-kotlin-version = "2.1.0"
+kotlin-version = "2.0.0"
 kotlinx-version = "1.10.1"
 postgresql-version = "42.7.4"
 tools-jib-gradle-plugin-version = "3.4.2"
 userAgentUtils-version = "1.21"
 [plugins]
 # 应用 Gradle 基础插件，提供项目的基础配置和插件管理能力
-java-gradle-plugin = { id = "java-gradle-plugin" }
+javaGradle-plugin = { id = "java-gradle-plugin" }
 # 应用 Java 插件，提供基本的 Java 代码编译和构建能力
 java = { id = "java" }
 
 # 应用 Java Library 插件，支持库开发，提供 API 和实现分离的能力
-java-library = { id = "java-library" }
+javaLibrary = { id = "java-library" }
 
 # 应用 Maven 发布插件，支持项目的构建产物发布到 Maven 仓库
 maven-publish = { id = "maven-publish" }

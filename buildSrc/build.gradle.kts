@@ -2,10 +2,8 @@
 plugins {
     // 核心：启用 Kotlin DSL 支持
     `kotlin-dsl`
-    alias {
-        libs.plugins.kotlin.jvm
-        libs.plugins.java.gradle.plugin
-    }
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.javaGradle.plugin)
 }
 dependencies {
 }

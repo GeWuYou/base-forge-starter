@@ -2,7 +2,7 @@ plugins {
     // 基本 Java 支持
     alias(libs.plugins.java)
     // Java 库开发支持
-    alias(libs.plugins.java.library)
+    alias(libs.plugins.javaLibrary)
     // Maven 发布支持
     alias(libs.plugins.maven.publish)
     // Spring 依赖管理插件，简化依赖版本管理
@@ -29,10 +29,10 @@ apply {
 subprojects {
     val libs = rootProject.libs
     apply {
-        plugin("java")
-        plugin("java-library")
+        plugin(libs.plugins.javaLibrary.get().pluginId)
+        plugin(libs.plugins.java.get().pluginId)
         plugin("maven-publish")
-        plugin("io.spring.dependency-management")
+        plugin(libs.plugins.spring.dependency.management.get().pluginId)
         plugin("org.jetbrains.kotlin.jvm")
         plugin("org.jetbrains.kotlin.plugin.spring")
         plugin("org.jetbrains.kotlin.plugin.lombok")
