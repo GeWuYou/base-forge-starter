@@ -26,16 +26,38 @@ val tasksDir = "$configDir/tasks/"
 apply {
     from(file("$tasksDir/gradleTask.gradle"))
 }
+allprojects {
+    // 设置全局属性
+    ext {
+        set(ProjectFlags.USE_SPRING_BOOT, true)
+        set(ProjectFlags.USE_GRPC, false)
+    }
+}
 subprojects {
+    afterEvaluate {
+        if (project.getPropertyByBoolean(ProjectFlags.USE_GRPC)) {
+            dependencies{
+                implementation(platform(libs.grpc.bom))
+                // gRPC Stub
+                implementation(libs.grpc.stub)
+            }
+        }
+        if (project.getPropertyByBoolean(ProjectFlags.USE_SPRING_BOOT)){
+            dependencies{
+                implementation(platform(libs.springBootDependencies.bom))
+                compileOnly(libs.springBootStarter.web)
+            }
+        }
+    }
     val libs = rootProject.libs
     apply {
         plugin(libs.plugins.javaLibrary.get().pluginId)
         plugin(libs.plugins.java.get().pluginId)
-        plugin("maven-publish")
+        plugin(libs.plugins.maven.publish.get().pluginId)
         plugin(libs.plugins.spring.dependency.management.get().pluginId)
-        plugin("org.jetbrains.kotlin.jvm")
-        plugin("org.jetbrains.kotlin.plugin.spring")
-        plugin("org.jetbrains.kotlin.plugin.lombok")
+        plugin(libs.plugins.kotlin.jvm.get().pluginId)
+        plugin(libs.plugins.kotlin.plugin.spring.get().pluginId)
+        plugin(libs.plugins.kotlin.plugin.lombok.get().pluginId)
         // 导入仓库配置
         from(file("$configDir/repositories.gradle"))
         // 导入源代码任务
@@ -44,17 +66,11 @@ subprojects {
         from(file("$configDir/publishing.gradle"))
     }
     dependencies {
-        implementation(platform(libs.springBootDependencies.bom))
-        implementation(platform(libs.grpc.bom))
         implementation(platform(libs.kotlin.bom))
         implementation(platform(libs.springCloudDependencies.bom))
-
-        implementation(libs.springBootStarter)
-        compileOnly(libs.springBootStarter.web)
+        annotationProcessor(libs.springBoot.configuration.processor)
         compileOnly(libs.lombok)
         annotationProcessor(libs.lombok)
-        annotationProcessor(libs.springBoot.configuration.processor)
-
     }
     configure<JavaPluginExtension> {
         toolchain {
@@ -75,4 +91,6 @@ subprojects {
     }
 }
 
-
+fun Project.getPropertyByBoolean(key: String): Boolean {
+    return properties[key]?.toString()?.toBoolean() ?: false
+}

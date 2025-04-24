@@ -1,6 +1,5 @@
+// 开启springboot
+extra[ProjectFlags.USE_GRPC] = true
 dependencies {
-    val libs = rootProject.libs
 
-    // gRPC Stub
-    implementation(libs.grpc.stub)
 }
